@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Günün Haberleri - Portalı</title>
+    <style>
+        /* Modern ve Temiz Tasarım (CSS) */
+        :root {
+            --primary: #2563eb;
+            --background: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px 0;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* Kontrol Paneli */
+        .controls {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        select, button {
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        select {
+            background: white;
+            min-width: 180px;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Haber Listesi */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .news-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #e2e8f0;
+        }
+
+        .news-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .news-body h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            line-height: 1.4;
+        }
+
+        .news-body p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .source-tag {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .read-btn {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        /* Mesajlar */
+        .message {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 50px;
+            color: var(--text-light);
+        }
+
+        .error {
+            color: #ef4444;
+            border: 1px solid #fee2e2;
+            background: #fef2f2;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            select, button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Haber Portalı</h1>
+            <p>Türkiye'den en güncel başlıkları takip edin</p>
+        </header>
+
+        <div class="controls">
+            <select id="category-select">
+                <option value="general">Gündem</option>
+                <option value="technology">Teknoloji</option>
+                <option value="business">Ekonomi</option>
+                <option value="sports">Spor</option>
+                <option value="science">Bilim</option>
+                <option value="health">Sağlık</option>
+                <option value="entertainment">Magazin</option>
+            </select>
+            <button id="load-btn">Haberleri Getir</button>
+        </div>
+
+        <div id="news-grid" class="news-grid">
+            <div class="message">Lütfen bir kategori seçip butona tıklayın.</div>
+        </div>
+    </div>
+
+    <script>
+        // Haberleri çeken ana mantık (JavaScript)
+        const API_KEY = '65b48d680a4044cdb4eed7b69f64f46c';
+        const newsGrid = document.getElementById('news-grid');
+        const loadBtn = document.getElementById('load-btn');
+        const categorySelect = document.getElementById('category-select');
+
+        async function getNews() {
+            const category = categorySelect.value;
+            // API URL (Türkiye ve seçilen kategori)
+            const url = `https://newsapi.org/v2/top-headlines?country=tr&category=${category}&apiKey=${API_KEY}`;
+
+            newsGrid.innerHTML = '<div class="message">Haberler yükleniyor, lütfen bekleyin...</div>';
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.status !== 'ok') {
+                    throw new Error(data.message || 'Haberler yüklenirken bir hata oluştu.');
+                }
+
+                displayNews(data.articles);
+            } catch (error) {
+                console.error("API Hatası:", error);
+                newsGrid.innerHTML = `
+                    <div class="message error">
+                        <strong>Hata:</strong> ${error.message}<br><br>
+                        <small>Not: Yerel dosyadan çalıştırıyorsanız tarayıcı engellemiş olabilir. <br>
+                        Dosyayı VS Code "Live Server" ile açmayı deneyin.</small>
+                    </div>
+                `;
+            }
+        }
+
+        function displayNews(articles) {
+            newsGrid.innerHTML = '';
+
+            if (articles.length === 0) {
+                newsGrid.innerHTML = '<div class="message">Bu kategoride şu an güncel haber bulunamadı.</div>';
+                return;
+            }
+
+            articles.forEach(article => {
+                // Kaydı silinmiş haberleri atla
+                if (article.title === '[Removed]') return;
+
+                const card = document.createElement('div');
+                card.className = 'news-card';
+
+                const image = article.urlToImage ? article.urlToImage : 'https://via.placeholder.com/400x200?text=Gorsel+Bulunamadi';
+
+                card.innerHTML = `
+                    <img src="${image}" alt="Haber Görseli" onerror="this.src='https://via.placeholder.com/400x200?text=Gorsel+Hatasi'">
+                    <div class="news-body">
+                        <h3>${article.title}</h3>
+                        <p>${article.description || 'Haber içeriği özeti bulunmuyor.'}</p>
+                        <div class="news-footer">
+                            <span class="source-tag">${article.source.name}</span>
+                            <a href="${article.url}" target="_blank" class="read-btn">OKU →</a>
+                        </div>
+                    </div>
+                `;
+                newsGrid.appendChild(card);
+            });
+        }
+
+        loadBtn.addEventListener('click', getNews);
+    </script>
+</body>
+</html>
+
