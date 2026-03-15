@@ -310,12 +310,13 @@
         let RSS_FEEDS = []; let allArticles = []; let filteredArticles = []; 
         let displayedCount = 0; let isFetchingRefresh = false; const ITEMS_PER_PAGE = 20;
 
-        window.onload = () => {
+                window.onload = () => {
             loadCustomFeeds(); renderChips();
             document.getElementById('controlsWrapper').classList.remove('collapsed');
             document.getElementById('toggleIcon').innerText = 'Kapat ▲';
             fetchAllRSS(); 
         };
+
 
         function switchLangTab(lang) {
             if (currentLang === lang) return;
