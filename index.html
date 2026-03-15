@@ -459,6 +459,14 @@
             } catch (err) { resultsDiv.innerHTML = '<span style="color:var(--danger); font-size:0.9rem;">❌ Site taranırken güvenlik hatası oluştu.</span>'; }
                             }
                     // YENİ: Kategori Dedektörü Eklendi
+        
+
+        // YENİ: XML İçinde Kategori Dedektörü Eklendi
+        function parseXMLToArticles(textData, feed) {
+            const parser = new DOMParser(); const xmlDoc = parser.parseFromString(textData, "text/xml"); const items = xmlDoc.querySelectorAll("item, entry"); let result = [];
+            let baseUrl = ""; try { baseUrl = new URL(feed.url).origin; } catch(e){}
+            items.forEach(item => {
+               // GÜÇLENDİRİLMİŞ VERİ ÇEKME MOTORU
         async function fetchFeedData(feed) {
             let articles = []; const domain = getDomain(feed.url);
             const fallbackGoogleRss = `https://news.google.com/rss/search?q=site:${domain}&hl=tr&gl=TR&ceid=TR:tr`;
@@ -473,11 +481,17 @@
                                 let img = "";
                                 if (item.enclosure && item.enclosure.link) img = item.enclosure.link;
                                 else if (item.thumbnail) img = item.thumbnail;
-                                else { const match = item.description.match(/<img[^>]+src=["']([^"']+)["']/i); if (match) img = match[1]; }
+                                else { 
+                                    // YENİ: Hem özetin hem de tam metnin içinde görsel arıyoruz (T24, TRT Haber için)
+                                    const descMatch = (item.description || "").match(/<img[^>]+src=["']([^"']+)["']/i); 
+                                    const contentMatch = (item.content || "").match(/<img[^>]+src=["']([^"']+)["']/i);
+                                    if (contentMatch) img = contentMatch[1];
+                                    else if (descMatch) img = descMatch[1]; 
+                                }
                                 if (!img) img = PLACEHOLDER_IMG;
-                                let pubDate = new Date(item.pubDate.replace(/-/g, '/')); if (isNaN(pubDate.getTime())) pubDate = new Date();
+                                let pubDate = new Date((item.pubDate||"").replace(/-/g, '/')); if (isNaN(pubDate.getTime())) pubDate = new Date();
                                 let cats = item.categories || [];
-                                return { title: item.title, description: item.description.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...', link: item.link, image: img, source: feed.name, date: pubDate, timestamp: pubDate.getTime(), categories: cats };
+                                return { title: item.title, description: (item.description||"").replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...', link: item.link, image: img, source: feed.name, date: pubDate, timestamp: pubDate.getTime(), categories: cats };
                             });
                         }
                         if (data.contents && data.contents.includes('<rss')) { articles = parseXMLToArticles(data.contents, feed); if (articles.length > 0) return articles; }
@@ -490,12 +504,49 @@
             return [];
         }
 
-        // YENİ: XML İçinde Kategori Dedektörü Eklendi
+        // GÜÇLENDİRİLMİŞ XML PARSER (Gizli Görselleri Bulan Dedektör)
         function parseXMLToArticles(textData, feed) {
             const parser = new DOMParser(); const xmlDoc = parser.parseFromString(textData, "text/xml"); const items = xmlDoc.querySelectorAll("item, entry"); let result = [];
             let baseUrl = ""; try { baseUrl = new URL(feed.url).origin; } catch(e){}
             items.forEach(item => {
                 const title = item.querySelector("title")?.textContent || "Başlıksız";
+                let link = "#"; const linkNode = item.querySelector("link"); if (linkNode) link = linkNode.textContent.trim() || linkNode.getAttribute("href") || "#";
+                let desc = item.querySelector("description, summary")?.textContent || "";
+                
+                // YENİ: VOA, DW ve soL gibi sitelerin metinleri content:encoded içine saklanır. Orayı da çekiyoruz.
+                let contentEnc = item.getElementsByTagNameNS("*", "encoded");
+                let fullText = desc + " " + (contentEnc.length > 0 ? contentEnc[0].textContent : "");
+                
+                let pubDate = new Date(); const pubNodes = item.getElementsByTagName('pubDate'); if(pubNodes.length > 0) { const parsed = new Date(pubNodes[0].textContent); if(!isNaN(parsed.getTime())) pubDate = parsed; }
+                
+                let image = ""; 
+                const enclosure = item.querySelector("enclosure"); 
+                const mediaContent = item.getElementsByTagNameNS("*", "content"); 
+                const mediaThumbnail = item.getElementsByTagNameNS("*", "thumbnail");
+                const imageTag = item.querySelector("image url"); // Nadir kullanılan <image> etiketi dedektörü
+                
+                if (enclosure && enclosure.getAttribute("url")) { image = enclosure.getAttribute("url"); } 
+                else if (mediaContent.length > 0 && mediaContent[0].getAttribute("url")) { image = mediaContent[0].getAttribute("url"); } 
+                else if (mediaThumbnail.length > 0 && mediaThumbnail[0].getAttribute("url")) { image = mediaThumbnail[0].getAttribute("url"); } 
+                else if (imageTag) { image = imageTag.textContent; }
+                else { 
+                    // YENİ: Sadece description'da değil, fullText (tüm içerik) içinde img etiketi arıyoruz
+                    const imgMatch = fullText.match(/<img[^>]+src=["']([^"']+)["']/i); 
+                    if (imgMatch && imgMatch[1]) image = imgMatch[1]; 
+                }
+                
+                // Sitenin kendi içinden (Göreceli) link verilmişse, sitenin ana adresiyle birleştir
+                if (image && image.startsWith('/')) image = baseUrl + image; 
+                if (!image) image = PLACEHOLDER_IMG;
+                
+                let categories = []; const catNodes = item.querySelectorAll("category"); catNodes.forEach(c => categories.push(c.textContent));
+                desc = desc.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...';
+                result.push({ title, description: desc, link, image, source: feed.name, date: pubDate, timestamp: pubDate.getTime(), categories });
+            });
+            return result;
+        }
+             
+             const title = item.querySelector("title")?.textContent || "Başlıksız";
                 let link = "#"; const linkNode = item.querySelector("link"); if (linkNode) link = linkNode.textContent.trim() || linkNode.getAttribute("href") || "#";
                 let desc = item.querySelector("description, summary, content")?.textContent || "";
                 let pubDate = new Date(); const pubNodes = item.getElementsByTagName('pubDate'); if(pubNodes.length > 0) { const parsed = new Date(pubNodes[0].textContent); if(!isNaN(parsed.getTime())) pubDate = parsed; }
