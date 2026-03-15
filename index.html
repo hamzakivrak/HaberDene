@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -83,7 +83,6 @@
         .news-card { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
         .news-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); }
         
-        /* Yeni: Kart Üzerindeki Dış Bağlantı Butonu */
         .external-link-btn { position: absolute; top: 15px; right: 15px; background: rgba(15, 23, 42, 0.6); color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1rem; z-index: 15; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.1); }
         .external-link-btn:hover { background: var(--accent); transform: scale(1.1); border-color: var(--accent); }
 
@@ -100,7 +99,8 @@
         .news-content h3 { font-size: 1.1rem; margin-bottom: 12px; line-height: 1.5; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 700; }
         .meta { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
         .read-more { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
-                .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .modal-content { background: var(--bg-dark); max-width: 1000px; width: 100%; height: 95vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; display: flex; flex-direction: column; border: 1px solid var(--surface-light); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { 0% { opacity: 0; transform: scale(0.95) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
@@ -175,7 +175,7 @@
 
                 <div class="search-box">
                     <span class="search-icon">⌕</span>
-                    <input type="text" id="searchInput" placeholder="İlgilendiğiniz konuyu yazın (Boşken tümü listelenir)..." onkeyup="handleSearch()">
+                    <input type="text" id="searchInput" placeholder="Konu, kategori veya kelime arayın..." onkeyup="handleSearch()">
                 </div>
 
                 <div>
@@ -226,8 +226,7 @@
                 <button onclick="fetchAllRSS()" class="fetch-btn" id="fetchBtn">Ağdan Yeni Haberleri Çek</button>
             </div>
         </div>
-
-        <div id="warningContainer"></div>
+                <div id="warningContainer"></div>
 
         <div id="newsGrid" class="news-grid">
             <div class="status-msg">En güncel manşetleri görmek için bekleyin...</div>
@@ -236,7 +235,8 @@
         <div id="scrollSpinner" class="status-msg" style="display: none; padding: 20px;">Aşağı doğru iniliyor, yeni haberler yükleniyor...</div>
         <div id="endRefreshSpinner" class="status-msg" style="display: none; padding: 20px; font-size:0.95rem; color:var(--accent);">Son haberlere ulaştınız. Ağda yeni bir gelişme var mı kontrol ediliyor...</div>
     </div>
-        <div id="toastNotification" class="toast-notification" onclick="scrollToTop()">
+
+    <div id="toastNotification" class="toast-notification" onclick="scrollToTop()">
         <span>⬆️</span> <span id="toastText">Yeni haberler eklendi!</span>
     </div>
 
@@ -272,8 +272,7 @@
             </div>
         </div>
     </div>
-
-    <script>
+        <script>
         const PLACEHOLDER_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%231e293b'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='16' fill='%2394a3b8' text-anchor='middle' dy='.3em'%3EGörsel Yok%3C/text%3E%3C/svg%3E";
 
         const FEEDS_TR = [
@@ -310,13 +309,12 @@
         let RSS_FEEDS = []; let allArticles = []; let filteredArticles = []; 
         let displayedCount = 0; let isFetchingRefresh = false; const ITEMS_PER_PAGE = 20;
 
-                window.onload = () => {
+        window.onload = () => {
             loadCustomFeeds(); renderChips();
-            document.getElementById('controlsWrapper').classList.remove('collapsed');
-            document.getElementById('toggleIcon').innerText = 'Kapat ▲';
+            // YENİ: Arama paneli ilk açılışta kapalı (collapsed) gelir.
+            document.getElementById('toggleIcon').innerText = 'Genişlet ▼';
             fetchAllRSS(); 
         };
-
 
         function switchLangTab(lang) {
             if (currentLang === lang) return;
@@ -333,7 +331,8 @@
             document.getElementById('searchInput').value = cat;
             handleSearch();
         }
-                function loadCustomFeeds() {
+
+        function loadCustomFeeds() {
             RSS_FEEDS = currentLang === 'TR' ? [...FEEDS_TR] : [...FEEDS_EN];
             const savedFeeds = JSON.parse(localStorage.getItem('customRSSFeeds')) || [];
             const langFeeds = savedFeeds.filter(f => (f.lang || 'TR') === currentLang);
@@ -369,8 +368,7 @@
                 list.appendChild(label);
             });
         }
-
-        let touchStartY = 0; let pullDistance = 0;
+                    let touchStartY = 0; let pullDistance = 0;
         const ptrEl = document.getElementById('pullToRefresh'); const ptrIcon = document.getElementById('ptrIcon'); const ptrText = document.getElementById('ptrText');
 
         window.addEventListener('touchstart', e => { if (window.scrollY === 0) touchStartY = e.touches[0].clientY; }, {passive: true});
@@ -398,7 +396,7 @@
 
         window.addEventListener('scroll', () => {
             const wrapper = document.getElementById('controlsWrapper'); const icon = document.getElementById('toggleIcon');
-            if (document.activeElement.tagName === 'INPUT') return; 
+            if (document.activeElement.tagName === 'INPUT') return; // YENİ: Arama yaparken klavye açılınca menü kapanmasın!
             if (window.scrollY > 100 && !wrapper.classList.contains('collapsed')) { wrapper.classList.add('collapsed'); icon.innerText = 'Genişlet ▼'; }
             
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
@@ -424,7 +422,7 @@
             const urlInput = document.getElementById('searchRssUrl').value.trim();
             if (!urlInput) return alert("Lütfen bir site adresi veya takip etmek istediğiniz konuyu yazın.");
             const resultsDiv = document.getElementById('rssSearchResults');
-            resultsDiv.innerHTML = '<span style="color:var(--accent); font-size:0.9rem;">⏳ Taranıyor, lütfen bekleyin...</span>';
+            resultsDiv.innerHTML = '<span style="color:var(--accent); font-size:0.9rem;">⏳ İşleniyor, lütfen bekleyin...</span>';
             
             const isUrl = urlInput.includes('.') && !urlInput.includes(' ');
             if (!isUrl) {
@@ -459,8 +457,9 @@
                     } else { resultsDiv.innerHTML = '<span style="color:var(--warning); font-size:0.9rem;">⚠️ Bu sitede otomatik RSS sinyali bulunamadı.</span>'; }
                 }
             } catch (err) { resultsDiv.innerHTML = '<span style="color:var(--danger); font-size:0.9rem;">❌ Site taranırken güvenlik hatası oluştu.</span>'; }
-                                                      }
-                async function fetchFeedData(feed) {
+                            }
+                    // YENİ: Kategori Dedektörü Eklendi
+        async function fetchFeedData(feed) {
             let articles = []; const domain = getDomain(feed.url);
             const fallbackGoogleRss = `https://news.google.com/rss/search?q=site:${domain}&hl=tr&gl=TR&ceid=TR:tr`;
             const proxies = [ `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`, `https://api.allorigins.win/get?url=${encodeURIComponent(feed.url)}`, `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(feed.url)}&_t=${Date.now()}`, `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(fallbackGoogleRss)}` ];
@@ -477,7 +476,8 @@
                                 else { const match = item.description.match(/<img[^>]+src=["']([^"']+)["']/i); if (match) img = match[1]; }
                                 if (!img) img = PLACEHOLDER_IMG;
                                 let pubDate = new Date(item.pubDate.replace(/-/g, '/')); if (isNaN(pubDate.getTime())) pubDate = new Date();
-                                return { title: item.title, description: item.description.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...', link: item.link, image: img, source: feed.name, date: pubDate, timestamp: pubDate.getTime() };
+                                let cats = item.categories || [];
+                                return { title: item.title, description: item.description.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...', link: item.link, image: img, source: feed.name, date: pubDate, timestamp: pubDate.getTime(), categories: cats };
                             });
                         }
                         if (data.contents && data.contents.includes('<rss')) { articles = parseXMLToArticles(data.contents, feed); if (articles.length > 0) return articles; }
@@ -490,6 +490,7 @@
             return [];
         }
 
+        // YENİ: XML İçinde Kategori Dedektörü Eklendi
         function parseXMLToArticles(textData, feed) {
             const parser = new DOMParser(); const xmlDoc = parser.parseFromString(textData, "text/xml"); const items = xmlDoc.querySelectorAll("item, entry"); let result = [];
             let baseUrl = ""; try { baseUrl = new URL(feed.url).origin; } catch(e){}
@@ -506,8 +507,9 @@
                 else { const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/i); if (imgMatch && imgMatch[1]) image = imgMatch[1]; }
                 if (image && image.startsWith('/')) image = baseUrl + image; if (!image) image = PLACEHOLDER_IMG;
                 
+                let categories = []; const catNodes = item.querySelectorAll("category"); catNodes.forEach(c => categories.push(c.textContent));
                 desc = desc.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...';
-                result.push({ title, description: desc, link, image, source: feed.name, date: pubDate, timestamp: pubDate.getTime() });
+                result.push({ title, description: desc, link, image, source: feed.name, date: pubDate, timestamp: pubDate.getTime(), categories });
             });
             return result;
         }
@@ -529,7 +531,9 @@
             await Promise.all(fetchPromises);
             allArticles.sort((a, b) => b.timestamp - a.timestamp);
             btn.disabled = false; btn.innerText = 'AĞDAN YENİ HABERLERİ ÇEK';
-            handleSearch(); document.getElementById('controlsWrapper').classList.add('collapsed'); document.getElementById('toggleIcon').innerText = 'Genişlet ▼';
+            handleSearch(); 
+            // Arama bittikten sonra panel açıksa kapatıyoruz
+            document.getElementById('controlsWrapper').classList.add('collapsed'); document.getElementById('toggleIcon').innerText = 'Genişlet ▼';
         }
 
         async function checkNewArticlesInBackground(isTopRefresh = false) {
@@ -553,13 +557,22 @@
             isFetchingRefresh = false;
         }
 
+        // YENİ: Arama Motoru artık kategorileri de okuyup zekice tarar
         function handleSearch(isSilentRefresh = false) {
             const checkedSources = Array.from(document.querySelectorAll('.source-cb:checked')).map(cb => cb.value);
             const searchText = trToLowerCase(document.getElementById('searchInput').value.trim()); const searchTerms = searchText.split(' ').filter(t => t.length > 0);
+            
             filteredArticles = allArticles.filter(art => {
-                const sourceMatch = checkedSources.includes(art.source); const titleLower = trToLowerCase(art.title); const descLower = trToLowerCase(art.description);
-                const textMatch = searchTerms.length === 0 || searchTerms.every(term => titleLower.includes(term) || descLower.includes(term)); return sourceMatch && textMatch;
+                const sourceMatch = checkedSources.includes(art.source); 
+                const titleLower = trToLowerCase(art.title); 
+                const descLower = trToLowerCase(art.description);
+                const catLower = art.categories ? trToLowerCase(art.categories.join(' ')) : "";
+                
+                const searchSpace = titleLower + " " + descLower + " " + catLower;
+                const textMatch = searchTerms.length === 0 || searchTerms.every(term => searchSpace.includes(term)); 
+                return sourceMatch && textMatch;
             });
+            
             if (!isSilentRefresh) { document.getElementById('newsGrid').innerHTML = ''; displayedCount = 0; } 
             else { document.getElementById('newsGrid').innerHTML = ''; displayedCount = 0; }
             if (filteredArticles.length === 0) { document.getElementById('newsGrid').innerHTML = `<div class="status-msg"><div style="font-size:3rem; margin-bottom:15px;">🔍</div>Bu kriterlere uyan haber bulunamadı.</div>`; return; }
@@ -573,8 +586,6 @@
                 const card = document.createElement('div'); card.className = 'news-card'; card.onclick = () => openModal(art);
                 const dateObj = art.date; const today = new Date();
                 let dateStr = (dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth()) ? "Bugün, " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }) + " " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-                
-                // YENİ: Dışarıda Aç Butonu Eklendi
                 card.innerHTML = `
                     <a href="${art.link}" target="_blank" class="external-link-btn" onclick="event.stopPropagation()" title="Orijinal Sitede Aç">↗️</a>
                     <div class="card-img-wrapper img-skeleton"><div class="source-badge">${art.source}</div><img src="${art.image}" onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" onerror="this.src='${PLACEHOLDER_IMG}'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');"></div>
@@ -639,7 +650,6 @@
             const iframe = document.getElementById('modalIframe'); iframe.removeAttribute('srcdoc'); iframe.src = 'about:blank'; document.getElementById('iframeBanner').style.display = 'flex'; 
         }
 
-        // YENİ: ÜÇ KERE DOKUNMA (Triple Tap) İLE PENCEREYİ KAPATMA
         let tapCount = 0; let tapTimeout;
         document.getElementById('modalBodyArea').addEventListener('click', (e) => {
             if(e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return; 
