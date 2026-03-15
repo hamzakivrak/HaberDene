@@ -6,7 +6,7 @@
     <title>Haber Portalı Pro | Global RSS</title>
     <style>
         :root {
-            --primary: #e11d48;
+            --primary: #e11d48; 
             --primary-hover: #be123c;
             --bg-dark: #0f172a;
             --surface: #1e293b;
@@ -20,34 +20,63 @@
             --shadow-card: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -2px rgba(0,0,0,0.15);
             --shadow-glow: 0 0 20px rgba(225, 29, 72, 0.15);
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; padding: 0 15px 20px 15px; overflow-anchor: auto; -webkit-font-smoothing: antialiased; overscroll-behavior-y: contain; }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 0 15px 20px 15px;
+            overflow-anchor: auto;
+            -webkit-font-smoothing: antialiased;
+            overscroll-behavior-y: contain; 
+        }
+
         .container { max-width: 1200px; margin: 0 auto; position: relative; }
-        .pull-to-refresh { position: fixed; top: -60px; left: 50%; transform: translateX(-50%); background: var(--surface); color: var(--primary); padding: 10px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid var(--surface-light); font-weight: 700; font-size: 0.95rem; z-index: 2000; opacity: 0; display: flex; align-items: center; gap: 10px; pointer-events: none; transition: opacity 0.2s ease; }
+        
+        .pull-to-refresh {
+            position: fixed; top: -60px; left: 50%; transform: translateX(-50%);
+            background: var(--surface); color: var(--primary); padding: 10px 20px;
+            border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid var(--surface-light);
+            font-weight: 700; font-size: 0.95rem; z-index: 2000; opacity: 0;
+            display: flex; align-items: center; gap: 10px; pointer-events: none; transition: opacity 0.2s ease;
+        }
+
         header { text-align: center; padding: 30px 0 20px; }
         header h1 { font-size: 2.5rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; text-shadow: var(--shadow-glow); }
         header h1 span { color: var(--primary); }
         header p { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
-        .controls-wrapper { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 0 0 var(--radius-lg) var(--radius-lg); border: 1px solid rgba(255, 255, 255, 0.05); border-top: none; margin-bottom: 25px; box-shadow: var(--shadow-card); position: sticky; top: 0; z-index: 100; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .controls-toggle { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; font-size: 1rem; font-weight: 600; color: var(--text-main); cursor: pointer; user-select: none; transition: all 0.3s; }
+
+        .controls-wrapper {
+            background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg); border: 1px solid rgba(255, 255, 255, 0.05); border-top: none;
+            margin-bottom: 25px; box-shadow: var(--shadow-card); position: sticky; top: 0; z-index: 100; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+                .controls-toggle { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; font-size: 1rem; font-weight: 600; color: var(--text-main); cursor: pointer; user-select: none; transition: all 0.3s; }
         .controls-toggle:hover { color: var(--primary); }
         .toggle-icon { background: var(--surface-light); padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; }
         .controls-content { padding: 0 25px 25px 25px; display: block; animation: fadeIn 0.3s ease; }
+
         .controls-wrapper.collapsed { background: rgba(225, 29, 72, 0.95); border-color: transparent; }
         .controls-wrapper.collapsed .controls-toggle { color: white; padding: 12px 25px; }
         .controls-wrapper.collapsed .toggle-icon { background: rgba(0,0,0,0.2); }
         .controls-wrapper.collapsed .controls-content { display: none; }
+
         .lang-tabs { display: flex; margin-bottom: 20px; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--surface-light); background: var(--bg-dark); }
         .lang-tab { flex: 1; padding: 12px; background: transparent; color: var(--text-muted); border: none; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 0.95rem; }
         .lang-tab.active { background: var(--primary); color: white; }
         .lang-tab:hover:not(.active) { background: rgba(255,255,255,0.05); color: var(--text-main); }
-        .search-box { margin: 10px 0 20px; position: relative; }
+                .search-box { margin: 10px 0 20px; position: relative; }
         .search-box input { width: 100%; padding: 15px 20px 15px 45px; border-radius: var(--radius-md); border: 1px solid var(--surface-light); background: rgba(15, 23, 42, 0.6); color: white; font-size: 1.05rem; outline: none; transition: all 0.3s; }
         .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15); background: var(--bg-dark); }
         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.2rem; }
+
         .filter-section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; display: flex; justify-content: space-between; }
         .select-all-btn { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.85rem; font-weight: 600; }
         .select-all-btn:hover { text-decoration: underline; }
+
         .chip-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; max-height: 160px; overflow-y: auto; padding-right: 5px; }
         .chip { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; background: var(--bg-dark); border: 1px solid var(--surface-light); border-radius: 30px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; user-select: none; }
         .chip input { display: none; }
@@ -55,6 +84,7 @@
         .chip.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); }
         .chip-delete { color: #fca5a5; background: rgba(0,0,0,0.2); border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; margin-left: 5px; }
         .chip-delete:hover { background: white; color: var(--danger); }
+
         .add-rss-container { margin-bottom: 25px; border-top: 1px solid var(--surface-light); padding-top: 15px; }
         .add-rss-header { color: var(--accent); font-size: 0.9rem; font-weight: 600; cursor: pointer; display: inline-block; }
         .add-rss-header:hover { text-decoration: underline; }
@@ -64,65 +94,80 @@
         .add-rss-form input:focus { border-color: var(--accent); }
         .add-rss-form button { padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .add-rss-form button:hover { background: #2563eb; }
+
         button.fetch-btn { width: 100%; background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px; border-radius: var(--radius-md); font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2); }
         button.fetch-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4); }
+
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
         .news-card { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
         .news-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); }
-        .card-img-wrapper { position: relative; width: 100%; height: 200px; overflow: hidden; flex-shrink: 0; background-color: #000; }
+        
+        .card-img-wrapper { position: relative; width: 100%; height: 200px; overflow: hidden; flex-shrink: 0; background-color: #0f172a; }
         .img-skeleton { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-light) 50%, var(--surface) 75%); background-size: 200% 100%; animation: skeletonLoading 1.5s infinite; }
         @keyframes skeletonLoading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         .news-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease; }
         .news-card:hover img { transform: scale(1.05); }
         .card-img-wrapper::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(30,41,59,1) 0%, rgba(30,41,59,0) 100%); pointer-events: none; }
+
         .source-badge { position: absolute; top: 15px; left: 15px; background: var(--primary); color: white; padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.4); pointer-events: none; letter-spacing: 0.5px; }
+        
         .news-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--surface); z-index: 2; }
         .news-content h3 { font-size: 1.1rem; margin-bottom: 12px; line-height: 1.5; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 700; }
         .meta { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
         .read-more { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+                .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .modal-content { background: var(--bg-dark); max-width: 900px; width: 100%; height: 90vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; display: flex; flex-direction: column; border: 1px solid var(--surface-light); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { 0% { opacity: 0; transform: scale(0.95) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
         .modal-header { background: var(--surface); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; flex-shrink: 0; }
         .modal-top-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
         .modal-source-name { font-weight: 800; color: var(--text-main); font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
         .modal-source-name::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+        
         .modal-actions { display: flex; gap: 15px; align-items: center; }
         .btn-icon { color: var(--text-muted); text-decoration: none; font-size: 1.2rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: var(--bg-dark); }
         .btn-icon:hover { color: white; background: var(--surface-light); }
         .btn-close { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: none; cursor: pointer; }
         .btn-close:hover { background: var(--danger); color: white; }
+
         .modal-tabs { display: flex; border-top: 1px solid var(--surface-light); }
         .tab-btn { flex: 1; padding: 12px; background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: 0.3s; border-bottom: 2px solid transparent; }
         .tab-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.02); }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: rgba(225, 29, 72, 0.05); }
+
         .modal-body { flex-grow: 1; position: relative; overflow-y: auto; background: var(--bg-dark); display: flex; flex-direction: column; }
+        
         #readerView { padding: 30px 25px; max-width: 750px; margin: 0 auto; width: 100%; }
         .reader-title { font-size: 1.8rem; font-weight: 800; color: white; margin-bottom: 20px; line-height: 1.3; }
         .reader-image { width: 100%; max-height: 400px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .reader-text-container p { margin-bottom: 20px; font-size: 1.15rem; line-height: 1.8; color: #cbd5e1; }
         .reader-text-container a { color: var(--accent); text-decoration: none; }
+        
         .loading-pulse { text-align: center; padding: 20px; color: var(--accent); font-weight: 600; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .summary-box { background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--accent); padding: 20px; border-radius: 0 var(--radius-md) var(--radius-md) 0; margin-bottom: 30px; }
         .summary-box p { margin: 0; font-size: 1.1rem; color: #e2e8f0; font-style: italic; line-height: 1.7; }
+
         #iframeView { display: none; flex-direction: column; width: 100%; height: 100%; background: #fff; }
         .iframe-banner { background: var(--surface); color: var(--text-main); padding: 10px 15px; font-size: 0.85rem; display: flex; justify-content: center; align-items: center; gap: 10px; border-bottom: 1px solid var(--surface-light); flex-shrink: 0; font-weight: 500; }
         .modal-iframe { width: 100%; flex-grow: 1; border: none; background: #fff; }
+
         .status-msg { text-align: center; padding: 50px 20px; color: var(--text-muted); grid-column: 1 / -1; font-size: 1.1rem; font-weight: 500; }
         .loading-bar { width: 100%; height: 6px; background: var(--surface-light); border-radius: 3px; overflow: hidden; margin-top: 20px; }
         .loading-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: width 0.3s; }
         .warning-box { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--warning); padding: 15px 20px; border-radius: var(--radius-md); font-size: 0.9rem; text-align: center; margin-bottom: 20px; font-weight: 500; }
+        
         .toast-notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(150px); background: var(--primary); color: white; padding: 12px 25px; border-radius: 30px; font-weight: 700; font-size: 1rem; box-shadow: 0 10px 25px rgba(225, 29, 72, 0.5); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3000; cursor: pointer; display: flex; align-items: center; gap: 10px; }
         .toast-notification.show { transform: translateX(-50%) translateY(0); }
+
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
         ::-webkit-scrollbar-thumb { background: var(--surface-light); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
     </style>
 </head>
-
 <body>
+
     <div id="pullToRefresh" class="pull-to-refresh">
         <span id="ptrIcon">⬇️</span> <span id="ptrText">Yenilemek için çekin</span>
     </div>
@@ -138,8 +183,8 @@
                 <span><span style="margin-right:8px;">🔍</span> Haberleri Ara, Filtrele ve Kaynak Ekle</span>
                 <span class="toggle-icon" id="toggleIcon">Genişlet ▼</span>
             </div>
-            
-            <div class="controls-content" id="controlsContent">
+                        <div class="controls-content" id="controlsContent">
+                
                 <div class="lang-tabs">
                     <button class="lang-tab active" id="tabLangTR" onclick="switchLangTab('TR')">🇹🇷 Türkçe Haberler</button>
                     <button class="lang-tab" id="tabLangEN" onclick="switchLangTab('EN')">🇬🇧 English News</button>
@@ -226,8 +271,10 @@
             </div>
         </div>
     </div>
-    
-        <script>
+
+    <script>
+        const PLACEHOLDER_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%231e293b'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='16' fill='%2394a3b8' text-anchor='middle' dy='.3em'%3EGörsel Yok%3C/text%3E%3C/svg%3E";
+
         const FEEDS_TR = [
             { id: 'sozcu', name: 'Sözcü', url: 'https://www.sozcu.com.tr/rss/tum-haberler.xml' },
             { id: 'cumhuriyet', name: 'Cumhuriyet', url: 'https://www.cumhuriyet.com.tr/rss' },
@@ -273,8 +320,7 @@
             document.getElementById('toggleIcon').innerText = 'Kapat ▲';
             fetchAllRSS(); 
         };
-
-        function switchLangTab(lang) {
+            function switchLangTab(lang) {
             if (currentLang === lang) return;
             currentLang = lang;
             document.getElementById('tabLangTR').classList.remove('active');
@@ -451,26 +497,29 @@
                         const data = await res.json();
                         if (data.status === 'ok' && data.items) {
                             return data.items.map(item => {
-                                let img = "https://via.placeholder.com/400x200/1e293b/f8fafc?text=Gorsel+Yok";
+                                let img = "";
                                 if (item.enclosure && item.enclosure.link) img = item.enclosure.link;
                                 else if (item.thumbnail) img = item.thumbnail;
                                 else {
-                                    const match = item.description.match(/<img[^>]+src="([^">]+)"/);
+                                    const match = item.description.match(/<img[^>]+src=["']([^"']+)["']/i);
                                     if (match) img = match[1];
                                 }
+                                if (!img) img = PLACEHOLDER_IMG;
+
                                 let pubDate = new Date(item.pubDate.replace(/-/g, '/')); 
                                 if (isNaN(pubDate.getTime())) pubDate = new Date();
+
                                 return { title: item.title, description: item.description.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...', link: item.link, image: img, source: feed.name, date: pubDate, timestamp: pubDate.getTime() };
                             });
                         }
                         if (data.contents && data.contents.includes('<rss')) {
-                            articles = parseXMLToArticles(data.contents, feed.name);
+                            articles = parseXMLToArticles(data.contents, feed);
                             if (articles.length > 0) return articles;
                         }
                     } else {
                         const text = await res.text();
                         if (text.includes("<rss") || text.includes("<feed")) {
-                            articles = parseXMLToArticles(text, feed.name);
+                            articles = parseXMLToArticles(text, feed);
                             if (articles.length > 0) return articles;
                         }
                     }
@@ -479,11 +528,14 @@
             return [];
         }
 
-        function parseXMLToArticles(textData, sourceName) {
+        function parseXMLToArticles(textData, feed) {
             const parser = new DOMParser();
             const xmlDoc = parser.parseFromString(textData, "text/xml");
             const items = xmlDoc.querySelectorAll("item, entry");
             let result = [];
+            
+            let baseUrl = "";
+            try { baseUrl = new URL(feed.url).origin; } catch(e){}
 
             items.forEach(item => {
                 const title = item.querySelector("title")?.textContent || "Başlıksız";
@@ -499,21 +551,31 @@
                     if(!isNaN(parsed.getTime())) pubDate = parsed;
                 }
 
-                let image = "https://via.placeholder.com/400x200/1e293b/f8fafc?text=Gorsel+Yok";
+                let image = "";
                 const enclosure = item.querySelector("enclosure");
-                if (enclosure && enclosure.getAttribute("url")) image = enclosure.getAttribute("url");
-                else {
-                    const imgMatch = desc.match(/<img[^>]+src="([^">]+)"/);
+                const mediaContent = item.getElementsByTagNameNS("*", "content");
+                const mediaThumbnail = item.getElementsByTagNameNS("*", "thumbnail");
+                
+                if (enclosure && enclosure.getAttribute("url")) {
+                    image = enclosure.getAttribute("url");
+                } else if (mediaContent.length > 0 && mediaContent[0].getAttribute("url")) {
+                    image = mediaContent[0].getAttribute("url");
+                } else if (mediaThumbnail.length > 0 && mediaThumbnail[0].getAttribute("url")) {
+                    image = mediaThumbnail[0].getAttribute("url");
+                } else {
+                    const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
                     if (imgMatch && imgMatch[1]) image = imgMatch[1];
                 }
 
+                if (image && image.startsWith('/')) image = baseUrl + image;
+                if (!image) image = PLACEHOLDER_IMG;
+
                 desc = desc.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...';
-                result.push({ title, description: desc, link, image, source: sourceName, date: pubDate, timestamp: pubDate.getTime() });
+                result.push({ title, description: desc, link, image, source: feed.name, date: pubDate, timestamp: pubDate.getTime() });
             });
             return result;
         }
-
-        async function fetchAllRSS() {
+                async function fetchAllRSS() {
             const grid = document.getElementById('newsGrid');
             const btn = document.getElementById('fetchBtn');
             btn.disabled = true; btn.innerText = 'GÜNCELLENİYOR...';
@@ -627,7 +689,9 @@
                 card.innerHTML = `
                     <div class="card-img-wrapper img-skeleton">
                         <div class="source-badge">${art.source}</div>
-                        <img src="${art.image}" onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" onerror="this.src='https://via.placeholder.com/400x200/1e293b/f8fafc?text=Gorsel+Yok'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');">
+                        <img src="${art.image}" 
+                             onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" 
+                             onerror="this.src='${PLACEHOLDER_IMG}'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');">
                     </div>
                     <div class="news-content">
                         <h3>${art.title}</h3>
@@ -663,7 +727,7 @@
             
             const imgEl = document.getElementById('modalImg');
             imgEl.src = art.image;
-            imgEl.style.display = art.image.includes('placeholder') ? 'none' : 'block';
+            imgEl.style.display = art.image.includes('svg+xml') ? 'none' : 'block';
             
             switchTab('reader');
             modal.style.display = 'flex';
