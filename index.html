@@ -3,20 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Haber Portalı Pro | Global RSS</title>
+    <title>Haber Portalı Pro | Global Medya Üssü</title>
     <style>
         :root {
-            --primary: #e11d48; 
-            --primary-hover: #be123c;
-            --bg-dark: #0f172a;
-            --surface: #1e293b;
-            --surface-light: #334155;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #3b82f6;
-            --danger: #ef4444;
-            --radius-lg: 20px;
-            --radius-md: 12px;
+            --primary: #e11d48; --primary-hover: #be123c; --bg-dark: #0f172a;
+            --surface: #1e293b; --surface-light: #334155; --text-main: #f8fafc;
+            --text-muted: #94a3b8; --accent: #3b82f6; --danger: #ef4444;
+            --radius-lg: 20px; --radius-md: 12px;
             --shadow-card: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -2px rgba(0,0,0,0.15);
             --shadow-glow: 0 0 20px rgba(225, 29, 72, 0.15);
         }
@@ -24,16 +17,16 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         
         body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; padding: 0 15px 20px 15px; overflow-anchor: auto; -webkit-font-smoothing: antialiased; overscroll-behavior-y: contain; }
-        .container { max-width: 1200px; margin: 0 auto; position: relative; }
+        .container { max-width: 1400px; margin: 0 auto; position: relative; }
         
         .pull-to-refresh { position: fixed; top: -60px; left: 50%; transform: translateX(-50%); background: var(--surface); color: var(--primary); padding: 10px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid var(--surface-light); font-weight: 700; font-size: 0.95rem; z-index: 2000; opacity: 0; display: flex; align-items: center; gap: 10px; pointer-events: none; transition: opacity 0.2s ease; }
 
         header { text-align: center; padding: 30px 0 20px; }
-        header h1 { font-size: 2.5rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; text-shadow: var(--shadow-glow); }
+        header h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; text-shadow: var(--shadow-glow); }
         header h1 span { color: var(--primary); }
-        header p { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
+        header p { color: var(--text-muted); font-size: clamp(0.85rem, 3vw, 1rem); font-weight: 500; }
 
-        .controls-wrapper { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 0 0 var(--radius-lg) var(--radius-lg); border: 1px solid rgba(255, 255, 255, 0.05); border-top: none; margin-bottom: 25px; box-shadow: var(--shadow-card); position: sticky; top: 0; z-index: 100; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .controls-wrapper { background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 0 0 var(--radius-lg) var(--radius-lg); border: 1px solid rgba(255, 255, 255, 0.05); border-top: none; margin-bottom: 25px; box-shadow: var(--shadow-card); position: sticky; top: 0; z-index: 100; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .controls-toggle { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; font-size: 1rem; font-weight: 600; color: var(--text-main); cursor: pointer; user-select: none; transition: all 0.3s; }
         .controls-toggle:hover { color: var(--primary); }
         .toggle-icon { background: var(--surface-light); padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; }
@@ -48,16 +41,27 @@
         .lang-tab { flex: 1; padding: 12px; background: transparent; color: var(--text-muted); border: none; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 0.95rem; }
         .lang-tab.active { background: var(--primary); color: white; }
         .lang-tab:hover:not(.active) { background: rgba(255,255,255,0.05); color: var(--text-main); }
-                .search-box { margin: 10px 0 20px; position: relative; }
-        .search-box input { width: 100%; padding: 15px 20px 15px 45px; border-radius: var(--radius-md); border: 1px solid var(--surface-light); background: rgba(15, 23, 42, 0.6); color: white; font-size: 1.05rem; outline: none; transition: all 0.3s; }
+
+                .search-box { margin: 10px 0 20px; position: relative; display: flex; gap: 10px; }
+        .search-box input { flex: 1; padding: 15px 20px 15px 45px; border-radius: var(--radius-md); border: 1px solid var(--surface-light); background: rgba(15, 23, 42, 0.6); color: white; font-size: 1.05rem; outline: none; transition: all 0.3s; }
         .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15); background: var(--bg-dark); }
         .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.2rem; }
 
-        .filter-section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; display: flex; justify-content: space-between; }
+        /* Hızlı Kategoriler (Yeni Eklendi) */
+        .category-scroll { display: none; overflow-x: auto; gap: 10px; padding: 5px 0 15px 0; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .category-scroll::-webkit-scrollbar { display: none; }
+        .category-scroll.show { display: flex; animation: fadeIn 0.3s ease; }
+        .cat-btn { white-space: nowrap; padding: 8px 18px; background: var(--surface-light); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .cat-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+        .cat-btn.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); }
+
+        .filter-section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; display: flex; justify-content: space-between; cursor: pointer; user-select: none; padding: 5px 0; }
+        .filter-section-title:hover { color: white; }
         .select-all-btn { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.85rem; font-weight: 600; }
         .select-all-btn:hover { text-decoration: underline; }
 
-        .chip-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; max-height: 160px; overflow-y: auto; padding-right: 5px; }
+        .chip-container { display: none; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; max-height: 160px; overflow-y: auto; padding-right: 5px; }
+        .chip-container.show { display: flex; animation: fadeIn 0.3s ease; }
         .chip { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; background: var(--bg-dark); border: 1px solid var(--surface-light); border-radius: 30px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; user-select: none; }
         .chip input { display: none; }
         .chip:hover { border-color: var(--text-muted); color: var(--text-main); }
@@ -70,39 +74,35 @@
         .add-rss-header:hover { text-decoration: underline; }
         .add-rss-form { display: none; gap: 10px; margin-top: 15px; flex-direction: column; animation: fadeIn 0.3s ease; }
         .add-rss-form.show { display: flex; }
-        .add-rss-form input { padding: 10px 15px; border-radius: 8px; border: 1px solid var(--surface-light); background: var(--bg-dark); color: white; outline: none; }
+        .add-rss-form input { padding: 12px 15px; border-radius: 8px; border: 1px solid var(--surface-light); background: var(--bg-dark); color: white; outline: none; }
         .add-rss-form input:focus { border-color: var(--accent); }
-        .add-rss-form button { padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .add-rss-form button { padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .add-rss-form button:hover { background: #2563eb; }
 
         button.fetch-btn { width: 100%; background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px; border-radius: var(--radius-md); font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2); }
         button.fetch-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4); }
 
-        /* YATAY KAYDIRMALI HABER IZGARASI */
-        .news-grid { display: flex; overflow-x: auto; gap: 20px; padding-bottom: 25px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-        .news-grid::-webkit-scrollbar { height: 8px; }
-        .news-grid::-webkit-scrollbar-track { background: var(--bg-dark); }
-        .news-grid::-webkit-scrollbar-thumb { background: var(--surface-light); border-radius: 4px; }
-        
-        .news-card { flex: 0 0 85%; max-width: 320px; scroll-snap-align: center; background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        /* Masaüstü ve Mobil Uyumlu Grid */
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .news-card { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
         .news-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); }
         
-        .card-img-wrapper { position: relative; width: 100%; height: 200px; overflow: hidden; flex-shrink: 0; background-color: #0f172a; }
+        .card-img-wrapper { position: relative; width: 100%; height: 220px; overflow: hidden; flex-shrink: 0; background-color: #0f172a; }
         .img-skeleton { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-light) 50%, var(--surface) 75%); background-size: 200% 100%; animation: skeletonLoading 1.5s infinite; }
         @keyframes skeletonLoading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-                .news-card { flex: 0 0 100%; max-width: 100%; scroll-snap-align: center; background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
-        .news-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); }
-        
-        .card-img-wrapper { position: relative; width: 100%; height: 280px; overflow: hidden; flex-shrink: 0; background-color: #0f172a; }
-                                                    
+        .news-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease; }
+        .news-card:hover img { transform: scale(1.05); }
+        .card-img-wrapper::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(30,41,59,1) 0%, rgba(30,41,59,0) 100%); pointer-events: none; }
+
         .source-badge { position: absolute; top: 15px; left: 15px; background: var(--primary); color: white; padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.4); pointer-events: none; letter-spacing: 0.5px; }
         
         .news-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--surface); z-index: 2; }
         .news-content h3 { font-size: 1.1rem; margin-bottom: 12px; line-height: 1.5; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 700; }
         .meta { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
         .read-more { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
-                .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .modal-content { background: var(--bg-dark); max-width: 900px; width: 100%; height: 90vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; display: flex; flex-direction: column; border: 1px solid var(--surface-light); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+                .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .modal-content { background: var(--bg-dark); max-width: 1000px; width: 100%; height: 95vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; display: flex; flex-direction: column; border: 1px solid var(--surface-light); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { 0% { opacity: 0; transform: scale(0.95) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
 
         .modal-header { background: var(--surface); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; flex-shrink: 0; }
@@ -121,11 +121,15 @@
         .tab-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.02); }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: rgba(225, 29, 72, 0.05); }
 
-        .modal-body { flex-grow: 1; position: relative; overflow-y: auto; background: var(--bg-dark); display: flex; flex-direction: column; }
+        /* Üçlü Dokunma Uyarı Katmanı */
+        .triple-tap-hint { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.8); font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; pointer-events: none; z-index: 100; animation: fadeOut 4s forwards; }
+        @keyframes fadeOut { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
+
+        .modal-body { flex-grow: 1; position: relative; overflow-y: auto; background: var(--bg-dark); display: flex; flex-direction: column; cursor: default; }
         
-        #readerView { padding: 30px 25px; max-width: 750px; margin: 0 auto; width: 100%; }
-        .reader-title { font-size: 1.8rem; font-weight: 800; color: white; margin-bottom: 20px; line-height: 1.3; }
-        .reader-image { width: 100%; max-height: 400px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        #readerView { padding: 30px 25px; max-width: 800px; margin: 0 auto; width: 100%; }
+        .reader-title { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; color: white; margin-bottom: 20px; line-height: 1.3; }
+        .reader-image { width: 100%; max-height: 450px; object-fit: cover; border-radius: var(--radius-md); margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .reader-text-container p { margin-bottom: 20px; font-size: 1.15rem; line-height: 1.8; color: #cbd5e1; }
         .reader-text-container a { color: var(--accent); text-decoration: none; }
         
@@ -141,32 +145,32 @@
         .status-msg { text-align: center; padding: 50px 20px; color: var(--text-muted); grid-column: 1 / -1; font-size: 1.1rem; font-weight: 500; }
         .loading-bar { width: 100%; height: 6px; background: var(--surface-light); border-radius: 3px; overflow: hidden; margin-top: 20px; }
         .loading-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: width 0.3s; }
-        .warning-box { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--warning); padding: 15px 20px; border-radius: var(--radius-md); font-size: 0.9rem; text-align: center; margin-bottom: 20px; font-weight: 500; }
-        
         .toast-notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(150px); background: var(--primary); color: white; padding: 12px 25px; border-radius: 30px; font-weight: 700; font-size: 1rem; box-shadow: 0 10px 25px rgba(225, 29, 72, 0.5); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3000; cursor: pointer; display: flex; align-items: center; gap: 10px; }
         .toast-notification.show { transform: translateX(-50%) translateY(0); }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--surface-light); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
     </style>
 </head>
-<body>
-
-    <div id="pullToRefresh" class="pull-to-refresh">
+<body>    <div id="pullToRefresh" class="pull-to-refresh">
         <span id="ptrIcon">⬇️</span> <span id="ptrText">Yenilemek için çekin</span>
     </div>
 
     <div class="container">
         <header>
             <h1>Haber Portalı <span>Pro</span></h1>
-            <p>Global Kaynaklar, Kesintisiz ve Kişiselleştirilebilir Haber Akışı</p>
+            <p>Global Kaynaklar, Akıllı Filtreler ve Sınırsız Akış</p>
         </header>
 
         <div class="controls-wrapper collapsed" id="controlsWrapper">
             <div class="controls-toggle" onclick="toggleControls()">
-                <span><span style="margin-right:8px;">🔍</span> Haberleri Ara, Filtrele ve Kaynak Ekle</span>
+                <span><span style="margin-right:8px;">🔍</span> Arama, Filtre ve Akıllı Kaynak Ekle</span>
                 <span class="toggle-icon" id="toggleIcon">Genişlet ▼</span>
             </div>
             
-                    <div class="controls-content" id="controlsContent">
-                
+            <div class="controls-content" id="controlsContent">
                 <div class="lang-tabs">
                     <button class="lang-tab active" id="tabLangTR" onclick="switchLangTab('TR')">🇹🇷 Türkçe Haberler</button>
                     <button class="lang-tab" id="tabLangEN" onclick="switchLangTab('EN')">🇬🇧 English News</button>
@@ -178,52 +182,63 @@
                 </div>
 
                 <div>
-                    <div class="filter-section-title">
-                        <span>Haber Kaynakları</span>
-                        <button class="select-all-btn" onclick="toggleAllSources()">Tümünü Seç / Kaldır</button>
+                    <div class="filter-section-title" onclick="document.getElementById('catWrapper').classList.toggle('show')">
+                        <span>📚 Hızlı Konu Filtreleri</span> <span>▼</span>
+                    </div>
+                    <div id="catWrapper" class="category-scroll show">
+                        <button class="cat-btn active" onclick="filterCategory('', this)">Tümü</button>
+                        <button class="cat-btn" onclick="filterCategory('Son Dakika', this)">🔥 Son Dakika</button>
+                        <button class="cat-btn" onclick="filterCategory('Bilim', this)">🧬 Bilim</button>
+                        <button class="cat-btn" onclick="filterCategory('Teknoloji', this)">💻 Teknoloji</button>
+                        <button class="cat-btn" onclick="filterCategory('Spor', this)">⚽ Spor</button>
+                        <button class="cat-btn" onclick="filterCategory('Ekonomi', this)">📈 Ekonomi</button>
+                        <button class="cat-btn" onclick="filterCategory('Dünya', this)">🌍 Dünya</button>
+                        <button class="cat-btn" onclick="filterCategory('Eğlence', this)">🎬 Eğlence</button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="filter-section-title" onclick="document.getElementById('filterList').classList.toggle('show')">
+                        <span>📰 Kaynak Filtreleri</span>
+                        <div>
+                            <button class="select-all-btn" onclick="toggleAllSources(event)">Tümünü Seç/Kaldır</button>
+                            <span style="margin-left:5px;">▼</span>
+                        </div>
                     </div>
                     <div class="chip-container" id="filterList"></div>
                 </div>
 
-                                <div class="add-rss-container">
+                <div class="add-rss-container">
                     <div class="add-rss-header" onclick="document.getElementById('addRssForm').classList.toggle('show')">
-                        ➕ İnternetten RSS Bul veya Ekle
+                        ➕ İnternetten RSS Bul veya Konu Ekle
                     </div>
                     <div class="add-rss-form" id="addRssForm">
-                        
                         <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border: 1px solid var(--surface-light);">
-                            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">🔍 Akıllı Site Tarayıcı (Sitenin RSS'ini bulur)</div>
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">🔍 Site Adresi (Örn: webtekno.com) veya Konu (Örn: Yapay Zeka) girin:</div>
                             <div style="display:flex; gap:10px;">
-                                <input type="text" id="searchRssUrl" placeholder="Site adresi (Örn: webtekno.com)" style="flex:1;">
-                                <button onclick="findRssFromUrl()" style="background:var(--accent); width:auto; padding: 10px 20px;">Bul</button>
+                                <input type="text" id="searchRssUrl" placeholder="Konu veya Site URL..." style="flex:1;">
+                                <button onclick="findRssFromUrl()" style="background:var(--accent); width:auto; padding: 10px 20px;">Bul / Ekle</button>
                             </div>
                             <div id="rssSearchResults" style="display:flex; flex-direction:column; gap:5px; margin-top:10px;"></div>
                         </div>
-
-                        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:10px;">📝 Manuel Kayıt:</div>
+                        
+                        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:10px;">📝 Ya da Manuel Kayıt:</div>
                         <input type="text" id="newRssName" placeholder="Kaynağın Adı (Örn: ShiftDelete)">
                         <input type="url" id="newRssUrl" placeholder="RSS Bağlantısı (Örn: https://shiftdelete.net/rss)">
-                        <button onclick="addCustomRSS()">Şu Anki Sekmeye Ekle ve Kaydet</button>
+                        <button onclick="addCustomRSS()">Sekmeye Manuel Ekle ve Kaydet</button>
                     </div>
-                                </div>
-                        
+                </div>
 
                 <button onclick="fetchAllRSS()" class="fetch-btn" id="fetchBtn">Ağdan Yeni Haberleri Çek</button>
             </div>
         </div>
 
-        <div id="warningContainer"></div>
-
-        <div id="newsGrid" class="news-grid">
+                <div id="newsGrid" class="news-grid">
             <div class="status-msg">En güncel manşetleri görmek için bekleyin...</div>
         </div>
         
-        <div id="scrollSpinner" class="status-msg" style="display: none; padding: 20px;">
-            Sona gelindi, yeni haberler yükleniyor...
-        </div>
-        <div id="endRefreshSpinner" class="status-msg" style="display: none; padding: 20px; font-size:0.95rem; color:var(--accent);">
-            Son haberlere ulaştınız. Ağda yeni bir gelişme var mı kontrol ediliyor...
-        </div>
+        <div id="scrollSpinner" class="status-msg" style="display: none; padding: 20px;">Aşağı doğru iniliyor, yeni haberler yükleniyor...</div>
+        <div id="endRefreshSpinner" class="status-msg" style="display: none; padding: 20px; font-size:0.95rem; color:var(--accent);">Son haberlere ulaştınız. Ağda yeni bir gelişme var mı kontrol ediliyor...</div>
     </div>
 
     <div id="toastNotification" class="toast-notification" onclick="scrollToTop()">
@@ -246,26 +261,24 @@
                 </div>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body" id="modalBodyArea">
+                <div class="triple-tap-hint">Kapatmak için ekrana 3 kez hızlıca dokun</div>
                 <div id="readerView">
                     <h2 class="reader-title" id="modalTitle">Başlık</h2>
                     <img id="modalImg" src="" class="reader-image" onerror="this.style.display='none'">
-                    <div class="summary-box">
-                        <p id="modalDesc">Özet metin...</p>
-                    </div>
+                    <div class="summary-box"><p id="modalDesc">Özet metin...</p></div>
                     <div id="fullTextContainer" class="reader-text-container"></div>
                 </div>
 
                 <div id="iframeView">
-                    <div class="iframe-banner" id="iframeBanner">
-                        <span style="animation: pulse 1.5s infinite;">⏳</span> Orijinal site bağlantısı kuruluyor...
-                    </div>
+                    <div class="iframe-banner" id="iframeBanner"><span style="animation: pulse 1.5s infinite;">⏳</span> Orijinal site bağlantısı kuruluyor...</div>
                     <iframe id="modalIframe" class="modal-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
                 </div>
             </div>
         </div>
-                </div>
-                   <script>
+    </div>
+
+    <script>
         const PLACEHOLDER_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%231e293b'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='16' fill='%2394a3b8' text-anchor='middle' dy='.3em'%3EGörsel Yok%3C/text%3E%3C/svg%3E";
 
         const FEEDS_TR = [
@@ -297,46 +310,34 @@
             { id: 'dailysabah', name: 'Daily Sabah', url: 'https://www.dailysabah.com/rss' },
             { id: 'hurriyet_en', name: 'Hürriyet Daily', url: 'https://www.hurriyetdailynews.com/rss.aspx' }
         ];
-
-        let currentLang = 'TR'; 
-        let RSS_FEEDS = [];
-        let allArticles = [];
-        let filteredArticles = []; 
-        let displayedCount = 0;
-        let isFetchingRefresh = false;
-        const ITEMS_PER_PAGE = 20;
+                let currentLang = 'TR'; let currentCategory = '';
+        let RSS_FEEDS = []; let allArticles = []; let filteredArticles = []; 
+        let displayedCount = 0; let isFetchingRefresh = false; const ITEMS_PER_PAGE = 20;
 
         window.onload = () => {
-            loadCustomFeeds(); 
-            renderChips();
+            loadCustomFeeds(); renderChips();
             document.getElementById('controlsWrapper').classList.remove('collapsed');
             document.getElementById('toggleIcon').innerText = 'Kapat ▲';
             fetchAllRSS(); 
-
-            // YATAY KAYDIRMA İÇİN SONSUZ YÜKLEME DİNLEYİCİSİ
-            const nGrid = document.getElementById('newsGrid');
-            nGrid.addEventListener('scroll', () => {
-                if ((nGrid.scrollLeft + nGrid.clientWidth) >= nGrid.scrollWidth - 350) {
-                    if (displayedCount < filteredArticles.length) {
-                        const spinner = document.getElementById('scrollSpinner');
-                        spinner.style.display = 'block';
-                        setTimeout(() => { renderNextBatch(); spinner.style.display = 'none'; }, 100);
-                    } else if (filteredArticles.length > 0 && !isFetchingRefresh) {
-                        isFetchingRefresh = true;
-                        document.getElementById('endRefreshSpinner').style.display = 'block';
-                        checkNewArticlesInBackground(false); 
-                    }
-                }
-            });
         };
 
         function switchLangTab(lang) {
             if (currentLang === lang) return;
             currentLang = lang;
-            document.getElementById('tabLangTR').classList.remove('active');
-            document.getElementById('tabLangEN').classList.remove('active');
+            document.getElementById('tabLangTR').classList.remove('active'); document.getElementById('tabLangEN').classList.remove('active');
             document.getElementById('tabLang' + lang).classList.add('active');
             loadCustomFeeds(); renderChips(); fetchAllRSS(); 
+        }
+
+        // Hızlı Kategori Filtresi
+        function filterCategory(cat, btnElement) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+            currentCategory = cat;
+            
+            // Eğer kategori boşsa aramayı sıfırla, doluysa aramaya o kelimeyi bas
+            document.getElementById('searchInput').value = cat;
+            handleSearch();
         }
 
         function loadCustomFeeds() {
@@ -351,75 +352,15 @@
             const name = nameInput.value.trim(); const url = urlInput.value.trim();
             if(!name || !url) return alert("Lütfen hem kaynak adı hem de RSS bağlantısı girin.");
             if(!url.startsWith('http')) return alert("Lütfen geçerli bir bağlantı (http/https ile başlayan) girin.");
+
             const newFeed = { id: 'custom_' + Date.now(), name: name, url: url, isCustom: true, lang: currentLang };
             const savedFeeds = JSON.parse(localStorage.getItem('customRSSFeeds')) || [];
             savedFeeds.push(newFeed); localStorage.setItem('customRSSFeeds', JSON.stringify(savedFeeds));
+            
             loadCustomFeeds(); nameInput.value = ''; urlInput.value = ''; document.getElementById('addRssForm').classList.remove('show');
             renderChips(); fetchAllRSS(); 
         }
-                       
-        // İNTERNETTEN RSS ARAMA VE BULMA MOTORU
-        async function findRssFromUrl() {
-            const urlInput = document.getElementById('searchRssUrl').value.trim();
-            if (!urlInput) return alert("Lütfen taramak istediğiniz sitenin adresini girin.");
-            
-            const resultsDiv = document.getElementById('rssSearchResults');
-            resultsDiv.innerHTML = '<span style="color:var(--accent); font-size:0.9rem;">⏳ Site kodları taranıyor, bekleyin...</span>';
-            
-            let targetUrl = urlInput;
-            if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
-            
-            try {
-                // Güvenlik duvarlarını aşmak için siteyi AllOrigins proxy'si üzerinden çekiyoruz
-                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-                const res = await fetch(proxyUrl);
-                const data = await res.json();
-                
-                if (data.contents) {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(data.contents, 'text/html');
-                    // Sitenin kafasındaki (head) RSS sinyallerini yakala
-                    const rssLinks = doc.querySelectorAll('link[type="application/rss+xml"], link[type="application/atom+xml"]');
-                    
-                    if (rssLinks.length > 0) {
-                        resultsDiv.innerHTML = '<span style="color:#10b981; font-size:0.9rem; font-weight:bold;">✅ Kaynaklar bulundu. Eklemek için tıklayın:</span>';
-                        
-                        rssLinks.forEach((link, index) => {
-                            let href = link.getAttribute('href');
-                            let title = link.getAttribute('title') || 'Ana RSS Akışı';
-                            
-                            // Eğik çizgiyle (/) başlayan gizli linkleri tam linke çevir
-                            if(href.startsWith('/')) {
-                                const urlObj = new URL(targetUrl);
-                                href = urlObj.origin + href;
-                            } else if (!href.startsWith('http')) {
-                                href = targetUrl.replace(/\/$/, '') + '/' + href;
-                            }
-                            
-                            const btn = document.createElement('button');
-                            btn.style.background = 'var(--surface-light)';
-                            btn.style.textAlign = 'left';
-                            btn.style.fontSize = '0.85rem';
-                            btn.style.color = 'white';
-                            btn.style.padding = '8px 12px';
-                            btn.innerHTML = `➕ ${title}`;
-                            btn.onclick = () => {
-                                document.getElementById('newRssName').value = title;
-                                document.getElementById('newRssUrl').value = href;
-                                addCustomRSS(); // Tıklandığı an sisteme kaydeder
-                                resultsDiv.innerHTML = ''; // Temizle
-                            };
-                            resultsDiv.appendChild(btn);
-                        });
-                    } else {
-                        resultsDiv.innerHTML = '<span style="color:var(--warning); font-size:0.9rem;">⚠️ Bu sitede otomatik RSS sinyali bulunamadı.</span>';
-                    }
-                }
-            } catch (err) {
-                resultsDiv.innerHTML = '<span style="color:var(--danger); font-size:0.9rem;">❌ Site taranırken güvenlik veya bağlantı hatası oluştu.</span>';
-            }
-            }
-                                         
+
         function deleteCustomRSS(id, event) {
             event.stopPropagation();
             if(!confirm("Bu özel RSS kaynağını silmek istediğinize emin misiniz?")) return;
@@ -440,6 +381,7 @@
 
         let touchStartY = 0; let pullDistance = 0;
         const ptrEl = document.getElementById('pullToRefresh'); const ptrIcon = document.getElementById('ptrIcon'); const ptrText = document.getElementById('ptrText');
+
         window.addEventListener('touchstart', e => { if (window.scrollY === 0) touchStartY = e.touches[0].clientY; }, {passive: true});
         window.addEventListener('touchmove', e => {
             if (window.scrollY === 0 && touchStartY > 0) {
@@ -465,24 +407,71 @@
 
         window.addEventListener('scroll', () => {
             const wrapper = document.getElementById('controlsWrapper'); const icon = document.getElementById('toggleIcon');
+            if (document.activeElement.tagName === 'INPUT') return; // Klavye açıksa menüyü saklama
             if (window.scrollY > 100 && !wrapper.classList.contains('collapsed')) { wrapper.classList.add('collapsed'); icon.innerText = 'Genişlet ▼'; }
+            
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
+                if (displayedCount < filteredArticles.length) {
+                    const spinner = document.getElementById('scrollSpinner'); spinner.style.display = 'block';
+                    setTimeout(() => { renderNextBatch(); spinner.style.display = 'none'; }, 100);
+                } else if (filteredArticles.length > 0 && !isFetchingRefresh) {
+                    isFetchingRefresh = true; document.getElementById('endRefreshSpinner').style.display = 'block';
+                    checkNewArticlesInBackground(false); 
+                }
+            }
         });
 
-        function scrollToTop() {
-            const nGrid = document.getElementById('newsGrid');
-            nGrid.scrollTo({ left: 0, behavior: 'smooth' }); // Yatay başa dön
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            document.getElementById('toastNotification').classList.remove('show');
-        }
-
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); document.getElementById('toastNotification').classList.remove('show'); }
         function trToLowerCase(text) { if (!text) return ""; return String(text).replace(/I/g, 'ı').replace(/İ/g, 'i').replace(/Ğ/g, 'ğ').replace(/Ü/g, 'ü').replace(/Ş/g, 'ş').replace(/Ö/g, 'ö').replace(/Ç/g, 'ç').toLowerCase(); }
         function getDomain(urlStr) { try { return new URL(urlStr).hostname.replace('www.', ''); } catch(e) { return ''; } }
         function toggleChip(cb) { if(cb.checked) cb.parentElement.classList.add('active'); else cb.parentElement.classList.remove('active'); handleSearch(); }
-        function toggleAllSources() { const checkboxes = document.querySelectorAll('.source-cb'); const allChecked = Array.from(checkboxes).every(cb => cb.checked); checkboxes.forEach(cb => { cb.checked = !allChecked; if(cb.checked) cb.parentElement.classList.add('active'); else cb.parentElement.classList.remove('active'); }); handleSearch(); }
-        const fetchWithTimeout = (url, timeout = 7000) => { return Promise.race([fetch(url), new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout))]); };
-                    async function fetchFeedData(feed) {
-            let articles = [];
-            const domain = getDomain(feed.url);
+        function toggleAllSources(e) { e.stopPropagation(); const checkboxes = document.querySelectorAll('.source-cb'); const allChecked = Array.from(checkboxes).every(cb => cb.checked); checkboxes.forEach(cb => { cb.checked = !allChecked; if(cb.checked) cb.parentElement.classList.add('active'); else cb.parentElement.classList.remove('active'); }); handleSearch(); }
+                const fetchWithTimeout = (url, timeout = 7000) => { return Promise.race([fetch(url), new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout))]); };
+
+        // İNTERNETTEN RSS ARAMA VE BULMA (YAPAY ZEKA MANTIĞI)
+        async function findRssFromUrl() {
+            const urlInput = document.getElementById('searchRssUrl').value.trim();
+            if (!urlInput) return alert("Lütfen bir site adresi veya takip etmek istediğiniz konuyu yazın.");
+            const resultsDiv = document.getElementById('rssSearchResults');
+            resultsDiv.innerHTML = '<span style="color:var(--accent); font-size:0.9rem;">⏳ Taranıyor, lütfen bekleyin...</span>';
+            
+            const isUrl = urlInput.includes('.') && !urlInput.includes(' ');
+            if (!isUrl) {
+                const googleRssUrl = `https://news.google.com/rss/search?q=${encodeURIComponent(urlInput)}&hl=tr&gl=TR&ceid=TR:tr`;
+                resultsDiv.innerHTML = '<span style="color:#10b981; font-size:0.9rem; font-weight:bold;">✅ Konu akışı hazır. Eklemek için tıklayın:</span>';
+                const btn = document.createElement('button');
+                btn.style.background = 'var(--surface-light)'; btn.style.textAlign = 'left'; btn.style.fontSize = '0.85rem'; btn.style.color = 'white'; btn.style.padding = '8px 12px'; btn.style.marginTop = '8px'; btn.style.borderRadius = '5px'; btn.style.width = '100%';
+                btn.innerHTML = `➕ '${urlInput}' Konu Takibi`;
+                btn.onclick = () => { document.getElementById('newRssName').value = urlInput; document.getElementById('newRssUrl').value = googleRssUrl; addCustomRSS(); resultsDiv.innerHTML = ''; };
+                resultsDiv.appendChild(btn); return;
+            }
+            
+            let targetUrl = urlInput.startsWith('http') ? urlInput : 'https://' + urlInput;
+            try {
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+                const res = await fetch(proxyUrl); const data = await res.json();
+                if (data.contents) {
+                    const parser = new DOMParser(); const doc = parser.parseFromString(data.contents, 'text/html');
+                    const rssLinks = doc.querySelectorAll('link[type="application/rss+xml"], link[type="application/atom+xml"]');
+                    if (rssLinks.length > 0) {
+                        resultsDiv.innerHTML = '<span style="color:#10b981; font-size:0.9rem; font-weight:bold;">✅ Kaynaklar bulundu. Eklemek için tıklayın:</span>';
+                        rssLinks.forEach((link) => {
+                            let href = link.getAttribute('href'); let title = link.getAttribute('title') || 'Ana RSS Akışı';
+                            if(href.startsWith('/')) { href = new URL(targetUrl).origin + href; } 
+                            else if (!href.startsWith('http')) { href = targetUrl.replace(/\/$/, '') + '/' + href; }
+                            const btn = document.createElement('button');
+                            btn.style.background = 'var(--surface-light)'; btn.style.textAlign = 'left'; btn.style.fontSize = '0.85rem'; btn.style.color = 'white'; btn.style.padding = '8px 12px'; btn.style.marginTop = '8px'; btn.style.borderRadius = '5px'; btn.style.width = '100%';
+                            btn.innerHTML = `➕ ${title}`;
+                            btn.onclick = () => { document.getElementById('newRssName').value = title; document.getElementById('newRssUrl').value = href; addCustomRSS(); resultsDiv.innerHTML = ''; };
+                            resultsDiv.appendChild(btn);
+                        });
+                    } else { resultsDiv.innerHTML = '<span style="color:var(--warning); font-size:0.9rem;">⚠️ Bu sitede otomatik RSS sinyali bulunamadı.</span>'; }
+                }
+            } catch (err) { resultsDiv.innerHTML = '<span style="color:var(--danger); font-size:0.9rem;">❌ Site taranırken güvenlik hatası oluştu.</span>'; }
+        }
+
+        async function fetchFeedData(feed) {
+            let articles = []; const domain = getDomain(feed.url);
             const fallbackGoogleRss = `https://news.google.com/rss/search?q=site:${domain}&hl=tr&gl=TR&ceid=TR:tr`;
             const proxies = [
                 `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`,
@@ -490,12 +479,9 @@
                 `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(feed.url)}&_t=${Date.now()}`,
                 `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(fallbackGoogleRss)}`
             ];
-
             for (let proxy of proxies) {
                 try {
-                    const res = await fetchWithTimeout(proxy, 6000);
-                    if (!res.ok) continue;
-
+                    const res = await fetchWithTimeout(proxy, 6000); if (!res.ok) continue;
                     if (proxy.includes('rss2json') || proxy.includes('allorigins')) {
                         const data = await res.json();
                         if (data.status === 'ok' && data.items) {
@@ -509,16 +495,10 @@
                                 return { title: item.title, description: item.description.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...', link: item.link, image: img, source: feed.name, date: pubDate, timestamp: pubDate.getTime() };
                             });
                         }
-                        if (data.contents && data.contents.includes('<rss')) {
-                            articles = parseXMLToArticles(data.contents, feed);
-                            if (articles.length > 0) return articles;
-                        }
+                        if (data.contents && data.contents.includes('<rss')) { articles = parseXMLToArticles(data.contents, feed); if (articles.length > 0) return articles; }
                     } else {
                         const text = await res.text();
-                        if (text.includes("<rss") || text.includes("<feed")) {
-                            articles = parseXMLToArticles(text, feed);
-                            if (articles.length > 0) return articles;
-                        }
+                        if (text.includes("<rss") || text.includes("<feed")) { articles = parseXMLToArticles(text, feed); if (articles.length > 0) return articles; }
                     }
                 } catch(e) { } 
             }
@@ -540,13 +520,13 @@
                 else if (mediaThumbnail.length > 0 && mediaThumbnail[0].getAttribute("url")) { image = mediaThumbnail[0].getAttribute("url"); } 
                 else { const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/i); if (imgMatch && imgMatch[1]) image = imgMatch[1]; }
                 if (image && image.startsWith('/')) image = baseUrl + image; if (!image) image = PLACEHOLDER_IMG;
+                
                 desc = desc.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...';
                 result.push({ title, description: desc, link, image, source: feed.name, date: pubDate, timestamp: pubDate.getTime() });
             });
             return result;
-        }
-
-        async function fetchAllRSS() {
+                                                                                                                                                  }
+                async function fetchAllRSS() {
             const grid = document.getElementById('newsGrid'); const btn = document.getElementById('fetchBtn'); btn.disabled = true; btn.innerText = 'GÜNCELLENİYOR...';
             grid.innerHTML = `<div class="status-msg"><span id="loadingText" style="color:white; font-weight:600;">Ağdan taze haberler çekiliyor...</span><div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div></div>`;
             allArticles = []; let completedCount = 0;
@@ -583,8 +563,7 @@
                 document.getElementById('toastText').innerText = `Şu an yeni haber yok. En günceldesiniz.`;
                 document.getElementById('toastNotification').classList.add('show'); setTimeout(() => { document.getElementById('toastNotification').classList.remove('show'); }, 3000);
             }
-            if (isTopRefresh) { resetPullToRefresh(); } 
-            else { endSpinner.innerText = "Tüm geçmiş gösterildi. Yeni haberler bekleniyor..."; setTimeout(() => { endSpinner.style.display = 'none'; }, 4000); }
+            if (isTopRefresh) { resetPullToRefresh(); } else { endSpinner.innerText = "Tüm geçmiş gösterildi. Yeni haberler bekleniyor..."; setTimeout(() => { endSpinner.style.display = 'none'; }, 4000); }
             isFetchingRefresh = false;
         }
 
@@ -609,10 +588,7 @@
                 const dateObj = art.date; const today = new Date();
                 let dateStr = (dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth()) ? "Bugün, " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }) + " " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
                 card.innerHTML = `
-                    <div class="card-img-wrapper img-skeleton">
-                        <div class="source-badge">${art.source}</div>
-                        <img src="${art.image}" onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" onerror="this.src='${PLACEHOLDER_IMG}'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');">
-                    </div>
+                    <div class="card-img-wrapper img-skeleton"><div class="source-badge">${art.source}</div><img src="${art.image}" onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" onerror="this.src='${PLACEHOLDER_IMG}'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');"></div>
                     <div class="news-content"><h3>${art.title}</h3><div class="meta"><span>🕒 ${dateStr}</span><span class="read-more">Haberi Oku →</span></div></div>
                 `;
                 grid.appendChild(card);
@@ -673,6 +649,17 @@
             document.getElementById('newsModal').style.display = 'none'; document.body.style.overflow = 'auto'; document.getElementById('fullTextContainer').innerHTML = ''; 
             const iframe = document.getElementById('modalIframe'); iframe.removeAttribute('srcdoc'); iframe.src = 'about:blank'; document.getElementById('iframeBanner').style.display = 'flex'; 
         }
+
+        // ÜÇ KERE DOKUNMA (Triple Tap) İLE KAPATMA
+        let tapCount = 0; let tapTimeout;
+        document.getElementById('modalBodyArea').addEventListener('click', (e) => {
+            if(e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return; // Butonlara tıklanırsa sayma
+            tapCount++; clearTimeout(tapTimeout);
+            if(tapCount >= 3) { closeModal(); tapCount = 0; } 
+            else { tapTimeout = setTimeout(() => { tapCount = 0; }, 500); }
+        });
+
+        // X butonu veya dış alan tıklaması
         window.onclick = (e) => { if(e.target.className === 'modal') closeModal(); };
     </script>
 </body>
