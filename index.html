@@ -90,10 +90,11 @@
         .card-img-wrapper { position: relative; width: 100%; height: 200px; overflow: hidden; flex-shrink: 0; background-color: #0f172a; }
         .img-skeleton { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-light) 50%, var(--surface) 75%); background-size: 200% 100%; animation: skeletonLoading 1.5s infinite; }
         @keyframes skeletonLoading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        .news-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease; }
-        .news-card:hover img { transform: scale(1.05); }
-        .card-img-wrapper::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(30,41,59,1) 0%, rgba(30,41,59,0) 100%); pointer-events: none; }
-
+                .news-card { flex: 0 0 100%; max-width: 100%; scroll-snap-align: center; background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        .news-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); }
+        
+        .card-img-wrapper { position: relative; width: 100%; height: 280px; overflow: hidden; flex-shrink: 0; background-color: #0f172a; }
+                                                    
         .source-badge { position: absolute; top: 15px; left: 15px; background: var(--primary); color: white; padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.4); pointer-events: none; letter-spacing: 0.5px; }
         
         .news-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--surface); z-index: 2; }
@@ -184,16 +185,28 @@
                     <div class="chip-container" id="filterList"></div>
                 </div>
 
-                <div class="add-rss-container">
+                                <div class="add-rss-container">
                     <div class="add-rss-header" onclick="document.getElementById('addRssForm').classList.toggle('show')">
-                        ➕ Özel RSS Kaynağı Ekle
+                        ➕ İnternetten RSS Bul veya Ekle
                     </div>
                     <div class="add-rss-form" id="addRssForm">
+                        
+                        <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border: 1px solid var(--surface-light);">
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">🔍 Akıllı Site Tarayıcı (Sitenin RSS'ini bulur)</div>
+                            <div style="display:flex; gap:10px;">
+                                <input type="text" id="searchRssUrl" placeholder="Site adresi (Örn: webtekno.com)" style="flex:1;">
+                                <button onclick="findRssFromUrl()" style="background:var(--accent); width:auto; padding: 10px 20px;">Bul</button>
+                            </div>
+                            <div id="rssSearchResults" style="display:flex; flex-direction:column; gap:5px; margin-top:10px;"></div>
+                        </div>
+
+                        <div style="font-size:0.8rem; color:var(--text-muted); margin-top:10px;">📝 Manuel Kayıt:</div>
                         <input type="text" id="newRssName" placeholder="Kaynağın Adı (Örn: ShiftDelete)">
                         <input type="url" id="newRssUrl" placeholder="RSS Bağlantısı (Örn: https://shiftdelete.net/rss)">
                         <button onclick="addCustomRSS()">Şu Anki Sekmeye Ekle ve Kaydet</button>
                     </div>
-                </div>
+                                </div>
+                        
 
                 <button onclick="fetchAllRSS()" class="fetch-btn" id="fetchBtn">Ağdan Yeni Haberleri Çek</button>
             </div>
@@ -344,7 +357,69 @@
             loadCustomFeeds(); nameInput.value = ''; urlInput.value = ''; document.getElementById('addRssForm').classList.remove('show');
             renderChips(); fetchAllRSS(); 
         }
-
+                       
+        // İNTERNETTEN RSS ARAMA VE BULMA MOTORU
+        async function findRssFromUrl() {
+            const urlInput = document.getElementById('searchRssUrl').value.trim();
+            if (!urlInput) return alert("Lütfen taramak istediğiniz sitenin adresini girin.");
+            
+            const resultsDiv = document.getElementById('rssSearchResults');
+            resultsDiv.innerHTML = '<span style="color:var(--accent); font-size:0.9rem;">⏳ Site kodları taranıyor, bekleyin...</span>';
+            
+            let targetUrl = urlInput;
+            if (!targetUrl.startsWith('http')) targetUrl = 'https://' + targetUrl;
+            
+            try {
+                // Güvenlik duvarlarını aşmak için siteyi AllOrigins proxy'si üzerinden çekiyoruz
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
+                const res = await fetch(proxyUrl);
+                const data = await res.json();
+                
+                if (data.contents) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data.contents, 'text/html');
+                    // Sitenin kafasındaki (head) RSS sinyallerini yakala
+                    const rssLinks = doc.querySelectorAll('link[type="application/rss+xml"], link[type="application/atom+xml"]');
+                    
+                    if (rssLinks.length > 0) {
+                        resultsDiv.innerHTML = '<span style="color:#10b981; font-size:0.9rem; font-weight:bold;">✅ Kaynaklar bulundu. Eklemek için tıklayın:</span>';
+                        
+                        rssLinks.forEach((link, index) => {
+                            let href = link.getAttribute('href');
+                            let title = link.getAttribute('title') || 'Ana RSS Akışı';
+                            
+                            // Eğik çizgiyle (/) başlayan gizli linkleri tam linke çevir
+                            if(href.startsWith('/')) {
+                                const urlObj = new URL(targetUrl);
+                                href = urlObj.origin + href;
+                            } else if (!href.startsWith('http')) {
+                                href = targetUrl.replace(/\/$/, '') + '/' + href;
+                            }
+                            
+                            const btn = document.createElement('button');
+                            btn.style.background = 'var(--surface-light)';
+                            btn.style.textAlign = 'left';
+                            btn.style.fontSize = '0.85rem';
+                            btn.style.color = 'white';
+                            btn.style.padding = '8px 12px';
+                            btn.innerHTML = `➕ ${title}`;
+                            btn.onclick = () => {
+                                document.getElementById('newRssName').value = title;
+                                document.getElementById('newRssUrl').value = href;
+                                addCustomRSS(); // Tıklandığı an sisteme kaydeder
+                                resultsDiv.innerHTML = ''; // Temizle
+                            };
+                            resultsDiv.appendChild(btn);
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '<span style="color:var(--warning); font-size:0.9rem;">⚠️ Bu sitede otomatik RSS sinyali bulunamadı.</span>';
+                    }
+                }
+            } catch (err) {
+                resultsDiv.innerHTML = '<span style="color:var(--danger); font-size:0.9rem;">❌ Site taranırken güvenlik veya bağlantı hatası oluştu.</span>';
+            }
+            }
+                                         
         function deleteCustomRSS(id, event) {
             event.stopPropagation();
             if(!confirm("Bu özel RSS kaynağını silmek istediğinize emin misiniz?")) return;
