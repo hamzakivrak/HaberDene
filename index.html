@@ -23,38 +23,18 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding: 0 15px 20px 15px;
-            overflow-anchor: auto;
-            -webkit-font-smoothing: antialiased;
-            overscroll-behavior-y: contain; 
-        }
-
+        body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; padding: 0 15px 20px 15px; overflow-anchor: auto; -webkit-font-smoothing: antialiased; overscroll-behavior-y: contain; }
         .container { max-width: 1200px; margin: 0 auto; position: relative; }
         
-        .pull-to-refresh {
-            position: fixed; top: -60px; left: 50%; transform: translateX(-50%);
-            background: var(--surface); color: var(--primary); padding: 10px 20px;
-            border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid var(--surface-light);
-            font-weight: 700; font-size: 0.95rem; z-index: 2000; opacity: 0;
-            display: flex; align-items: center; gap: 10px; pointer-events: none; transition: opacity 0.2s ease;
-        }
+        .pull-to-refresh { position: fixed; top: -60px; left: 50%; transform: translateX(-50%); background: var(--surface); color: var(--primary); padding: 10px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid var(--surface-light); font-weight: 700; font-size: 0.95rem; z-index: 2000; opacity: 0; display: flex; align-items: center; gap: 10px; pointer-events: none; transition: opacity 0.2s ease; }
 
         header { text-align: center; padding: 30px 0 20px; }
         header h1 { font-size: 2.5rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; text-shadow: var(--shadow-glow); }
         header h1 span { color: var(--primary); }
         header p { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
 
-        .controls-wrapper {
-            background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-radius: 0 0 var(--radius-lg) var(--radius-lg); border: 1px solid rgba(255, 255, 255, 0.05); border-top: none;
-            margin-bottom: 25px; box-shadow: var(--shadow-card); position: sticky; top: 0; z-index: 100; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-                .controls-toggle { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; font-size: 1rem; font-weight: 600; color: var(--text-main); cursor: pointer; user-select: none; transition: all 0.3s; }
+        .controls-wrapper { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 0 0 var(--radius-lg) var(--radius-lg); border: 1px solid rgba(255, 255, 255, 0.05); border-top: none; margin-bottom: 25px; box-shadow: var(--shadow-card); position: sticky; top: 0; z-index: 100; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .controls-toggle { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; font-size: 1rem; font-weight: 600; color: var(--text-main); cursor: pointer; user-select: none; transition: all 0.3s; }
         .controls-toggle:hover { color: var(--primary); }
         .toggle-icon { background: var(--surface-light); padding: 5px 10px; border-radius: 8px; font-size: 0.8rem; }
         .controls-content { padding: 0 25px 25px 25px; display: block; animation: fadeIn 0.3s ease; }
@@ -98,8 +78,13 @@
         button.fetch-btn { width: 100%; background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px; border-radius: var(--radius-md); font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2); }
         button.fetch-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4); }
 
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-        .news-card { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        /* YATAY KAYDIRMALI HABER IZGARASI */
+        .news-grid { display: flex; overflow-x: auto; gap: 20px; padding-bottom: 25px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+        .news-grid::-webkit-scrollbar { height: 8px; }
+        .news-grid::-webkit-scrollbar-track { background: var(--bg-dark); }
+        .news-grid::-webkit-scrollbar-thumb { background: var(--surface-light); border-radius: 4px; }
+        
+        .news-card { flex: 0 0 85%; max-width: 320px; scroll-snap-align: center; background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
         .news-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); }
         
         .card-img-wrapper { position: relative; width: 100%; height: 200px; overflow: hidden; flex-shrink: 0; background-color: #0f172a; }
@@ -159,11 +144,6 @@
         
         .toast-notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(150px); background: var(--primary); color: white; padding: 12px 25px; border-radius: 30px; font-weight: 700; font-size: 1rem; box-shadow: 0 10px 25px rgba(225, 29, 72, 0.5); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 3000; cursor: pointer; display: flex; align-items: center; gap: 10px; }
         .toast-notification.show { transform: translateX(-50%) translateY(0); }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--surface-light); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -183,7 +163,8 @@
                 <span><span style="margin-right:8px;">🔍</span> Haberleri Ara, Filtrele ve Kaynak Ekle</span>
                 <span class="toggle-icon" id="toggleIcon">Genişlet ▼</span>
             </div>
-                        <div class="controls-content" id="controlsContent">
+            
+                    <div class="controls-content" id="controlsContent">
                 
                 <div class="lang-tabs">
                     <button class="lang-tab active" id="tabLangTR" onclick="switchLangTab('TR')">🇹🇷 Türkçe Haberler</button>
@@ -225,7 +206,7 @@
         </div>
         
         <div id="scrollSpinner" class="status-msg" style="display: none; padding: 20px;">
-            Aşağı doğru iniliyor, yeni haberler yükleniyor...
+            Sona gelindi, yeni haberler yükleniyor...
         </div>
         <div id="endRefreshSpinner" class="status-msg" style="display: none; padding: 20px; font-size:0.95rem; color:var(--accent);">
             Son haberlere ulaştınız. Ağda yeni bir gelişme var mı kontrol ediliyor...
@@ -270,9 +251,8 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <script>
+                </div>
+                   <script>
         const PLACEHOLDER_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%231e293b'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='16' fill='%2394a3b8' text-anchor='middle' dy='.3em'%3EGörsel Yok%3C/text%3E%3C/svg%3E";
 
         const FEEDS_TR = [
@@ -319,16 +299,31 @@
             document.getElementById('controlsWrapper').classList.remove('collapsed');
             document.getElementById('toggleIcon').innerText = 'Kapat ▲';
             fetchAllRSS(); 
+
+            // YATAY KAYDIRMA İÇİN SONSUZ YÜKLEME DİNLEYİCİSİ
+            const nGrid = document.getElementById('newsGrid');
+            nGrid.addEventListener('scroll', () => {
+                if ((nGrid.scrollLeft + nGrid.clientWidth) >= nGrid.scrollWidth - 350) {
+                    if (displayedCount < filteredArticles.length) {
+                        const spinner = document.getElementById('scrollSpinner');
+                        spinner.style.display = 'block';
+                        setTimeout(() => { renderNextBatch(); spinner.style.display = 'none'; }, 100);
+                    } else if (filteredArticles.length > 0 && !isFetchingRefresh) {
+                        isFetchingRefresh = true;
+                        document.getElementById('endRefreshSpinner').style.display = 'block';
+                        checkNewArticlesInBackground(false); 
+                    }
+                }
+            });
         };
-            function switchLangTab(lang) {
+
+        function switchLangTab(lang) {
             if (currentLang === lang) return;
             currentLang = lang;
             document.getElementById('tabLangTR').classList.remove('active');
             document.getElementById('tabLangEN').classList.remove('active');
             document.getElementById('tabLang' + lang).classList.add('active');
-            loadCustomFeeds();
-            renderChips();
-            fetchAllRSS(); 
+            loadCustomFeeds(); renderChips(); fetchAllRSS(); 
         }
 
         function loadCustomFeeds() {
@@ -339,45 +334,29 @@
         }
 
         function addCustomRSS() {
-            const nameInput = document.getElementById('newRssName');
-            const urlInput = document.getElementById('newRssUrl');
-            const name = nameInput.value.trim();
-            const url = urlInput.value.trim();
-
+            const nameInput = document.getElementById('newRssName'); const urlInput = document.getElementById('newRssUrl');
+            const name = nameInput.value.trim(); const url = urlInput.value.trim();
             if(!name || !url) return alert("Lütfen hem kaynak adı hem de RSS bağlantısı girin.");
             if(!url.startsWith('http')) return alert("Lütfen geçerli bir bağlantı (http/https ile başlayan) girin.");
-
             const newFeed = { id: 'custom_' + Date.now(), name: name, url: url, isCustom: true, lang: currentLang };
             const savedFeeds = JSON.parse(localStorage.getItem('customRSSFeeds')) || [];
-            savedFeeds.push(newFeed);
-            localStorage.setItem('customRSSFeeds', JSON.stringify(savedFeeds));
-            
-            loadCustomFeeds();
-            nameInput.value = ''; urlInput.value = '';
-            document.getElementById('addRssForm').classList.remove('show');
-            renderChips();
-            fetchAllRSS(); 
+            savedFeeds.push(newFeed); localStorage.setItem('customRSSFeeds', JSON.stringify(savedFeeds));
+            loadCustomFeeds(); nameInput.value = ''; urlInput.value = ''; document.getElementById('addRssForm').classList.remove('show');
+            renderChips(); fetchAllRSS(); 
         }
 
         function deleteCustomRSS(id, event) {
             event.stopPropagation();
             if(!confirm("Bu özel RSS kaynağını silmek istediğinize emin misiniz?")) return;
-
             let savedFeeds = JSON.parse(localStorage.getItem('customRSSFeeds')) || [];
-            savedFeeds = savedFeeds.filter(f => f.id !== id);
-            localStorage.setItem('customRSSFeeds', JSON.stringify(savedFeeds));
-            
-            loadCustomFeeds();
-            renderChips();
-            handleSearch();
+            savedFeeds = savedFeeds.filter(f => f.id !== id); localStorage.setItem('customRSSFeeds', JSON.stringify(savedFeeds));
+            loadCustomFeeds(); renderChips(); handleSearch();
         }
 
         function renderChips() {
-            const list = document.getElementById('filterList');
-            list.innerHTML = '';
+            const list = document.getElementById('filterList'); list.innerHTML = '';
             RSS_FEEDS.forEach(feed => {
-                const label = document.createElement('label');
-                label.className = 'chip active';
+                const label = document.createElement('label'); label.className = 'chip active';
                 let deleteBtn = feed.isCustom ? `<span class="chip-delete" onclick="deleteCustomRSS('${feed.id}', event)" title="Kaynağı Sil">✕</span>` : '';
                 label.innerHTML = `<input type="checkbox" class="source-cb" value="${feed.name}" checked onchange="toggleChip(this)"> ${feed.name} ${deleteBtn}`;
                 list.appendChild(label);
@@ -385,102 +364,51 @@
         }
 
         let touchStartY = 0; let pullDistance = 0;
-        const ptrEl = document.getElementById('pullToRefresh');
-        const ptrIcon = document.getElementById('ptrIcon');
-        const ptrText = document.getElementById('ptrText');
-
+        const ptrEl = document.getElementById('pullToRefresh'); const ptrIcon = document.getElementById('ptrIcon'); const ptrText = document.getElementById('ptrText');
         window.addEventListener('touchstart', e => { if (window.scrollY === 0) touchStartY = e.touches[0].clientY; }, {passive: true});
         window.addEventListener('touchmove', e => {
             if (window.scrollY === 0 && touchStartY > 0) {
                 pullDistance = e.touches[0].clientY - touchStartY;
                 if (pullDistance > 0 && pullDistance < 150) {
-                    ptrEl.style.opacity = Math.min(pullDistance / 80, 1);
-                    ptrEl.style.transform = `translateX(-50%) translateY(${pullDistance * 0.5}px)`;
+                    ptrEl.style.opacity = Math.min(pullDistance / 80, 1); ptrEl.style.transform = `translateX(-50%) translateY(${pullDistance * 0.5}px)`;
                     if (pullDistance > 80) { ptrIcon.innerText = "🔄"; ptrText.innerText = "Yenilemek için bırakın"; } 
                     else { ptrIcon.innerText = "⬇️"; ptrText.innerText = "Yenilemek için çekin"; }
                 }
             }
         }, {passive: true});
         window.addEventListener('touchend', () => {
-            if (pullDistance > 80 && !isFetchingRefresh) {
-                ptrIcon.innerText = "⏳"; ptrText.innerText = "Ağ taranıyor...";
-                checkNewArticlesInBackground(true); 
-            } else { resetPullToRefresh(); }
+            if (pullDistance > 80 && !isFetchingRefresh) { ptrIcon.innerText = "⏳"; ptrText.innerText = "Ağ taranıyor..."; checkNewArticlesInBackground(true); } 
+            else { resetPullToRefresh(); }
         });
-
-        function resetPullToRefresh() {
-            ptrEl.style.transform = `translateX(-50%) translateY(0)`; ptrEl.style.opacity = 0; touchStartY = 0; pullDistance = 0;
-            setTimeout(() => { ptrIcon.innerText = "⬇️"; ptrText.innerText = "Yenilemek için çekin"; }, 300);
-        }
+        function resetPullToRefresh() { ptrEl.style.transform = `translateX(-50%) translateY(0)`; ptrEl.style.opacity = 0; touchStartY = 0; pullDistance = 0; setTimeout(() => { ptrIcon.innerText = "⬇️"; ptrText.innerText = "Yenilemek için çekin"; }, 300); }
 
         function toggleControls() {
-            const wrapper = document.getElementById('controlsWrapper');
-            const icon = document.getElementById('toggleIcon');
-            if (wrapper.classList.contains('collapsed')) {
-                wrapper.classList.remove('collapsed'); icon.innerText = 'Kapat ▲';
-            } else {
-                wrapper.classList.add('collapsed'); icon.innerText = 'Genişlet ▼';
-            }
+            const wrapper = document.getElementById('controlsWrapper'); const icon = document.getElementById('toggleIcon');
+            if (wrapper.classList.contains('collapsed')) { wrapper.classList.remove('collapsed'); icon.innerText = 'Kapat ▲'; } 
+            else { wrapper.classList.add('collapsed'); icon.innerText = 'Genişlet ▼'; }
         }
 
         window.addEventListener('scroll', () => {
-            const wrapper = document.getElementById('controlsWrapper');
-            const icon = document.getElementById('toggleIcon');
-            if (window.scrollY > 100 && !wrapper.classList.contains('collapsed')) {
-                wrapper.classList.add('collapsed'); icon.innerText = 'Genişlet ▼';
-            }
-            
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
-                if (displayedCount < filteredArticles.length) {
-                    const spinner = document.getElementById('scrollSpinner');
-                    spinner.style.display = 'block';
-                    setTimeout(() => { renderNextBatch(); spinner.style.display = 'none'; }, 100);
-                } else if (filteredArticles.length > 0 && !isFetchingRefresh) {
-                    isFetchingRefresh = true;
-                    document.getElementById('endRefreshSpinner').style.display = 'block';
-                    checkNewArticlesInBackground(false); 
-                }
-            }
+            const wrapper = document.getElementById('controlsWrapper'); const icon = document.getElementById('toggleIcon');
+            if (window.scrollY > 100 && !wrapper.classList.contains('collapsed')) { wrapper.classList.add('collapsed'); icon.innerText = 'Genişlet ▼'; }
         });
 
         function scrollToTop() {
+            const nGrid = document.getElementById('newsGrid');
+            nGrid.scrollTo({ left: 0, behavior: 'smooth' }); // Yatay başa dön
             window.scrollTo({ top: 0, behavior: 'smooth' });
             document.getElementById('toastNotification').classList.remove('show');
         }
 
-        function trToLowerCase(text) {
-            if (!text) return ""; 
-            return String(text).replace(/I/g, 'ı').replace(/İ/g, 'i').replace(/Ğ/g, 'ğ').replace(/Ü/g, 'ü').replace(/Ş/g, 'ş').replace(/Ö/g, 'ö').replace(/Ç/g, 'ç').toLowerCase();
-        }
-
+        function trToLowerCase(text) { if (!text) return ""; return String(text).replace(/I/g, 'ı').replace(/İ/g, 'i').replace(/Ğ/g, 'ğ').replace(/Ü/g, 'ü').replace(/Ş/g, 'ş').replace(/Ö/g, 'ö').replace(/Ç/g, 'ç').toLowerCase(); }
         function getDomain(urlStr) { try { return new URL(urlStr).hostname.replace('www.', ''); } catch(e) { return ''; } }
-
-        function toggleChip(cb) {
-            if(cb.checked) cb.parentElement.classList.add('active');
-            else cb.parentElement.classList.remove('active');
-            handleSearch();
-        }
-
-        function toggleAllSources() {
-            const checkboxes = document.querySelectorAll('.source-cb');
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach(cb => {
-                cb.checked = !allChecked;
-                if(cb.checked) cb.parentElement.classList.add('active');
-                else cb.parentElement.classList.remove('active');
-            });
-            handleSearch();
-        }
-
-        const fetchWithTimeout = (url, timeout = 7000) => {
-            return Promise.race([fetch(url), new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout))]);
-        };
-
-        async function fetchFeedData(feed) {
+        function toggleChip(cb) { if(cb.checked) cb.parentElement.classList.add('active'); else cb.parentElement.classList.remove('active'); handleSearch(); }
+        function toggleAllSources() { const checkboxes = document.querySelectorAll('.source-cb'); const allChecked = Array.from(checkboxes).every(cb => cb.checked); checkboxes.forEach(cb => { cb.checked = !allChecked; if(cb.checked) cb.parentElement.classList.add('active'); else cb.parentElement.classList.remove('active'); }); handleSearch(); }
+        const fetchWithTimeout = (url, timeout = 7000) => { return Promise.race([fetch(url), new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout))]); };
+                    async function fetchFeedData(feed) {
             let articles = [];
             const domain = getDomain(feed.url);
             const fallbackGoogleRss = `https://news.google.com/rss/search?q=site:${domain}&hl=tr&gl=TR&ceid=TR:tr`;
-
             const proxies = [
                 `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`,
                 `https://api.allorigins.win/get?url=${encodeURIComponent(feed.url)}`,
@@ -500,15 +428,9 @@
                                 let img = "";
                                 if (item.enclosure && item.enclosure.link) img = item.enclosure.link;
                                 else if (item.thumbnail) img = item.thumbnail;
-                                else {
-                                    const match = item.description.match(/<img[^>]+src=["']([^"']+)["']/i);
-                                    if (match) img = match[1];
-                                }
+                                else { const match = item.description.match(/<img[^>]+src=["']([^"']+)["']/i); if (match) img = match[1]; }
                                 if (!img) img = PLACEHOLDER_IMG;
-
-                                let pubDate = new Date(item.pubDate.replace(/-/g, '/')); 
-                                if (isNaN(pubDate.getTime())) pubDate = new Date();
-
+                                let pubDate = new Date(item.pubDate.replace(/-/g, '/')); if (isNaN(pubDate.getTime())) pubDate = new Date();
                                 return { title: item.title, description: item.description.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...', link: item.link, image: img, source: feed.name, date: pubDate, timestamp: pubDate.getTime() };
                             });
                         }
@@ -529,290 +451,153 @@
         }
 
         function parseXMLToArticles(textData, feed) {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(textData, "text/xml");
-            const items = xmlDoc.querySelectorAll("item, entry");
-            let result = [];
-            
-            let baseUrl = "";
-            try { baseUrl = new URL(feed.url).origin; } catch(e){}
-
+            const parser = new DOMParser(); const xmlDoc = parser.parseFromString(textData, "text/xml"); const items = xmlDoc.querySelectorAll("item, entry"); let result = [];
+            let baseUrl = ""; try { baseUrl = new URL(feed.url).origin; } catch(e){}
             items.forEach(item => {
                 const title = item.querySelector("title")?.textContent || "Başlıksız";
-                let link = "#";
-                const linkNode = item.querySelector("link");
-                if (linkNode) link = linkNode.textContent.trim() || linkNode.getAttribute("href") || "#";
-
+                let link = "#"; const linkNode = item.querySelector("link"); if (linkNode) link = linkNode.textContent.trim() || linkNode.getAttribute("href") || "#";
                 let desc = item.querySelector("description, summary, content")?.textContent || "";
-                let pubDate = new Date();
-                const pubNodes = item.getElementsByTagName('pubDate');
-                if(pubNodes.length > 0) {
-                    const parsed = new Date(pubNodes[0].textContent);
-                    if(!isNaN(parsed.getTime())) pubDate = parsed;
-                }
-
-                let image = "";
-                const enclosure = item.querySelector("enclosure");
-                const mediaContent = item.getElementsByTagNameNS("*", "content");
-                const mediaThumbnail = item.getElementsByTagNameNS("*", "thumbnail");
+                let pubDate = new Date(); const pubNodes = item.getElementsByTagName('pubDate'); if(pubNodes.length > 0) { const parsed = new Date(pubNodes[0].textContent); if(!isNaN(parsed.getTime())) pubDate = parsed; }
                 
-                if (enclosure && enclosure.getAttribute("url")) {
-                    image = enclosure.getAttribute("url");
-                } else if (mediaContent.length > 0 && mediaContent[0].getAttribute("url")) {
-                    image = mediaContent[0].getAttribute("url");
-                } else if (mediaThumbnail.length > 0 && mediaThumbnail[0].getAttribute("url")) {
-                    image = mediaThumbnail[0].getAttribute("url");
-                } else {
-                    const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
-                    if (imgMatch && imgMatch[1]) image = imgMatch[1];
-                }
-
-                if (image && image.startsWith('/')) image = baseUrl + image;
-                if (!image) image = PLACEHOLDER_IMG;
-
+                let image = ""; const enclosure = item.querySelector("enclosure"); const mediaContent = item.getElementsByTagNameNS("*", "content"); const mediaThumbnail = item.getElementsByTagNameNS("*", "thumbnail");
+                if (enclosure && enclosure.getAttribute("url")) { image = enclosure.getAttribute("url"); } 
+                else if (mediaContent.length > 0 && mediaContent[0].getAttribute("url")) { image = mediaContent[0].getAttribute("url"); } 
+                else if (mediaThumbnail.length > 0 && mediaThumbnail[0].getAttribute("url")) { image = mediaThumbnail[0].getAttribute("url"); } 
+                else { const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/i); if (imgMatch && imgMatch[1]) image = imgMatch[1]; }
+                if (image && image.startsWith('/')) image = baseUrl + image; if (!image) image = PLACEHOLDER_IMG;
                 desc = desc.replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...';
                 result.push({ title, description: desc, link, image, source: feed.name, date: pubDate, timestamp: pubDate.getTime() });
             });
             return result;
         }
-                async function fetchAllRSS() {
-            const grid = document.getElementById('newsGrid');
-            const btn = document.getElementById('fetchBtn');
-            btn.disabled = true; btn.innerText = 'GÜNCELLENİYOR...';
-            
+
+        async function fetchAllRSS() {
+            const grid = document.getElementById('newsGrid'); const btn = document.getElementById('fetchBtn'); btn.disabled = true; btn.innerText = 'GÜNCELLENİYOR...';
             grid.innerHTML = `<div class="status-msg"><span id="loadingText" style="color:white; font-weight:600;">Ağdan taze haberler çekiliyor...</span><div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div></div>`;
-
-            allArticles = [];
-            let completedCount = 0;
-
+            allArticles = []; let completedCount = 0;
             const fetchPromises = RSS_FEEDS.map(async (feed) => {
                 try {
                     const feedArticles = await fetchFeedData(feed);
                     if (feedArticles.length > 0) allArticles.push(...feedArticles);
                 } catch (error) {} finally {
-                    completedCount++;
-                    const fillObj = document.getElementById('loadingFill');
-                    const textObj = document.getElementById('loadingText');
+                    completedCount++; const fillObj = document.getElementById('loadingFill'); const textObj = document.getElementById('loadingText');
                     if(fillObj) fillObj.style.width = `${(completedCount / RSS_FEEDS.length) * 100}%`;
                     if(textObj) textObj.innerText = `${feed.name} Taranıyor (${completedCount} / ${RSS_FEEDS.length})`;
                 }
             });
-
             await Promise.all(fetchPromises);
             allArticles.sort((a, b) => b.timestamp - a.timestamp);
             btn.disabled = false; btn.innerText = 'AĞDAN YENİ HABERLERİ ÇEK';
-            
-            handleSearch();
-            document.getElementById('controlsWrapper').classList.add('collapsed');
-            document.getElementById('toggleIcon').innerText = 'Genişlet ▼';
+            handleSearch(); document.getElementById('controlsWrapper').classList.add('collapsed'); document.getElementById('toggleIcon').innerText = 'Genişlet ▼';
         }
 
         async function checkNewArticlesInBackground(isTopRefresh = false) {
-            isFetchingRefresh = true;
-            const endSpinner = document.getElementById('endRefreshSpinner');
-            let newCount = 0;
-
+            isFetchingRefresh = true; const endSpinner = document.getElementById('endRefreshSpinner'); let newCount = 0;
             const fetchPromises = RSS_FEEDS.map(async (feed) => {
                 try {
                     const feedArticles = await fetchFeedData(feed);
-                    feedArticles.forEach(newArt => {
-                        const exists = allArticles.find(a => a.link === newArt.link);
-                        if(!exists) { allArticles.push(newArt); newCount++; }
-                    });
+                    feedArticles.forEach(newArt => { const exists = allArticles.find(a => a.link === newArt.link); if(!exists) { allArticles.push(newArt); newCount++; } });
                 } catch(e) {}
             });
-
             await Promise.all(fetchPromises);
-            
             if (newCount > 0) {
-                allArticles.sort((a, b) => b.timestamp - a.timestamp);
-                handleSearch(true); 
-                document.getElementById('toastText').innerText = `${newCount} yeni haber eklendi! Yukarı çıkın.`;
-                document.getElementById('toastNotification').classList.add('show');
-                setTimeout(() => { document.getElementById('toastNotification').classList.remove('show'); }, 6000);
+                allArticles.sort((a, b) => b.timestamp - a.timestamp); handleSearch(true); 
+                document.getElementById('toastText').innerText = `${newCount} yeni haber eklendi! Basa dönün.`;
+                document.getElementById('toastNotification').classList.add('show'); setTimeout(() => { document.getElementById('toastNotification').classList.remove('show'); }, 6000);
             } else if (isTopRefresh) {
                 document.getElementById('toastText').innerText = `Şu an yeni haber yok. En günceldesiniz.`;
-                document.getElementById('toastNotification').classList.add('show');
-                setTimeout(() => { document.getElementById('toastNotification').classList.remove('show'); }, 3000);
+                document.getElementById('toastNotification').classList.add('show'); setTimeout(() => { document.getElementById('toastNotification').classList.remove('show'); }, 3000);
             }
-            
             if (isTopRefresh) { resetPullToRefresh(); } 
             else { endSpinner.innerText = "Tüm geçmiş gösterildi. Yeni haberler bekleniyor..."; setTimeout(() => { endSpinner.style.display = 'none'; }, 4000); }
-            
             isFetchingRefresh = false;
         }
 
         function handleSearch(isSilentRefresh = false) {
             const checkedSources = Array.from(document.querySelectorAll('.source-cb:checked')).map(cb => cb.value);
-            const searchText = trToLowerCase(document.getElementById('searchInput').value.trim());
-            const searchTerms = searchText.split(' ').filter(t => t.length > 0);
-
+            const searchText = trToLowerCase(document.getElementById('searchInput').value.trim()); const searchTerms = searchText.split(' ').filter(t => t.length > 0);
             filteredArticles = allArticles.filter(art => {
-                const sourceMatch = checkedSources.includes(art.source);
-                const titleLower = trToLowerCase(art.title);
-                const descLower = trToLowerCase(art.description);
-                const textMatch = searchTerms.length === 0 || searchTerms.every(term => titleLower.includes(term) || descLower.includes(term));
-                return sourceMatch && textMatch;
+                const sourceMatch = checkedSources.includes(art.source); const titleLower = trToLowerCase(art.title); const descLower = trToLowerCase(art.description);
+                const textMatch = searchTerms.length === 0 || searchTerms.every(term => titleLower.includes(term) || descLower.includes(term)); return sourceMatch && textMatch;
             });
-
-            if (!isSilentRefresh) {
-                document.getElementById('newsGrid').innerHTML = '';
-                displayedCount = 0;
-            } else {
-                document.getElementById('newsGrid').innerHTML = '';
-                displayedCount = 0;
-            }
-            
-            if (filteredArticles.length === 0) {
-                document.getElementById('newsGrid').innerHTML = `<div class="status-msg"><div style="font-size:3rem; margin-bottom:15px;">🔍</div>Bu kriterlere uyan haber bulunamadı.</div>`;
-                return;
-            }
-
+            if (!isSilentRefresh) { document.getElementById('newsGrid').innerHTML = ''; displayedCount = 0; } 
+            else { document.getElementById('newsGrid').innerHTML = ''; displayedCount = 0; }
+            if (filteredArticles.length === 0) { document.getElementById('newsGrid').innerHTML = `<div class="status-msg"><div style="font-size:3rem; margin-bottom:15px;">🔍</div>Bu kriterlere uyan haber bulunamadı.</div>`; return; }
             renderNextBatch();
         }
 
         function renderNextBatch() {
             const grid = document.getElementById('newsGrid');
             const nextBatch = filteredArticles.slice(displayedCount, displayedCount + ITEMS_PER_PAGE);
-            
             nextBatch.forEach(art => {
-                const card = document.createElement('div');
-                card.className = 'news-card';
-                card.onclick = () => openModal(art);
-                
-                const dateObj = art.date;
-                const today = new Date();
-                let dateStr = (dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth()) 
-                    ? "Bugün, " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
-                    : dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }) + " " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-
+                const card = document.createElement('div'); card.className = 'news-card'; card.onclick = () => openModal(art);
+                const dateObj = art.date; const today = new Date();
+                let dateStr = (dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth()) ? "Bugün, " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }) + " " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
                 card.innerHTML = `
                     <div class="card-img-wrapper img-skeleton">
                         <div class="source-badge">${art.source}</div>
-                        <img src="${art.image}" 
-                             onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" 
-                             onerror="this.src='${PLACEHOLDER_IMG}'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');">
+                        <img src="${art.image}" onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" onerror="this.src='${PLACEHOLDER_IMG}'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');">
                     </div>
-                    <div class="news-content">
-                        <h3>${art.title}</h3>
-                        <div class="meta"><span>🕒 ${dateStr}</span><span class="read-more">Haberi Oku →</span></div>
-                    </div>
+                    <div class="news-content"><h3>${art.title}</h3><div class="meta"><span>🕒 ${dateStr}</span><span class="read-more">Haberi Oku →</span></div></div>
                 `;
                 grid.appendChild(card);
             });
-
             displayedCount += nextBatch.length;
         }
 
         function switchTab(tab) {
-            document.getElementById('tabReader').classList.remove('active');
-            document.getElementById('tabWeb').classList.remove('active');
-            if(tab === 'reader') {
-                document.getElementById('tabReader').classList.add('active');
-                document.getElementById('readerView').style.display = 'block';
-                document.getElementById('iframeView').style.display = 'none';
-            } else {
-                document.getElementById('tabWeb').classList.add('active');
-                document.getElementById('readerView').style.display = 'none';
-                document.getElementById('iframeView').style.display = 'flex';
-            }
+            document.getElementById('tabReader').classList.remove('active'); document.getElementById('tabWeb').classList.remove('active');
+            if(tab === 'reader') { document.getElementById('tabReader').classList.add('active'); document.getElementById('readerView').style.display = 'block'; document.getElementById('iframeView').style.display = 'none'; } 
+            else { document.getElementById('tabWeb').classList.add('active'); document.getElementById('readerView').style.display = 'none'; document.getElementById('iframeView').style.display = 'flex'; }
         }
 
         async function openModal(art) {
             const modal = document.getElementById('newsModal');
-            document.getElementById('modalSource').innerText = art.source;
-            document.getElementById('modalLinkExt').href = art.link;
-            document.getElementById('modalTitle').innerText = art.title;
-            document.getElementById('modalDesc').innerText = art.description;
+            document.getElementById('modalSource').innerText = art.source; document.getElementById('modalLinkExt').href = art.link; document.getElementById('modalTitle').innerText = art.title; document.getElementById('modalDesc').innerText = art.description;
+            const imgEl = document.getElementById('modalImg'); imgEl.src = art.image; imgEl.style.display = art.image.includes('svg+xml') ? 'none' : 'block';
+            switchTab('reader'); modal.style.display = 'flex'; document.body.style.overflow = 'hidden'; 
             
-            const imgEl = document.getElementById('modalImg');
-            imgEl.src = art.image;
-            imgEl.style.display = art.image.includes('svg+xml') ? 'none' : 'block';
-            
-            switchTab('reader');
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; 
-            
-            const textContainer = document.getElementById('fullTextContainer');
-            textContainer.innerHTML = `<div class="loading-pulse">Haber metni analiz ediliyor...</div>`;
-            
-            const iframe = document.getElementById('modalIframe');
-            const banner = document.getElementById('iframeBanner');
-            iframe.removeAttribute('srcdoc');
-            iframe.src = 'about:blank'; 
-            
-            banner.innerHTML = `<span style="animation: pulse 1.5s infinite;">⏳</span> Orijinal site bağlantısı kuruluyor...`;
+            const textContainer = document.getElementById('fullTextContainer'); textContainer.innerHTML = `<div class="loading-pulse">Haber metni analiz ediliyor...</div>`;
+            const iframe = document.getElementById('modalIframe'); const banner = document.getElementById('iframeBanner');
+            iframe.removeAttribute('srcdoc'); iframe.src = 'about:blank'; banner.innerHTML = `<span style="animation: pulse 1.5s infinite;">⏳</span> Orijinal site bağlantısı kuruluyor...`;
 
             try {
                 if(art.link.includes('news.google.com')) throw new Error("Google Redirect");
-
-                const proxies = [
-                    `https://api.allorigins.win/raw?url=${encodeURIComponent(art.link)}`,
-                    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(art.link)}&_t=${Date.now()}`
-                ];
-
+                const proxies = [ `https://api.allorigins.win/raw?url=${encodeURIComponent(art.link)}`, `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(art.link)}&_t=${Date.now()}` ];
                 let html = null;
                 for (let proxy of proxies) {
                     try {
                         const res = await fetchWithTimeout(proxy, 8000);
-                        if (res.ok) {
-                            const text = await res.text();
-                            if (text && !text.includes('security service to protect itself') && !text.includes('Cloudflare')) {
-                                html = text; break;
-                            }
-                        }
+                        if (res.ok) { const text = await res.text(); if (text && !text.includes('security service to protect itself') && !text.includes('Cloudflare')) { html = text; break; } }
                     } catch(e) {}
                 }
-                
                 if (!html) throw new Error("Sayfa kopyalanamadı");
 
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
+                const parser = new DOMParser(); const doc = parser.parseFromString(html, 'text/html');
                 const paragraphs = Array.from(doc.querySelectorAll('p, .content p, .news-text p, article p'));
-                
                 const validText = paragraphs.map(p => p.textContent.trim()).filter(t => t.length > 70 && !t.toLowerCase().includes("tüm hakları saklıdır") && !t.toLowerCase().includes("copyright"));
                 const uniqueText = [...new Set(validText)];
-                    
                 if (uniqueText.length > 0) textContainer.innerHTML = uniqueText.map(t => `<p>${t}</p>`).join('');
                 else textContainer.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">Tam metin ayıklanamadı. Sağ üstten site görünümüne geçebilirsiniz.</div>`;
 
-                html = html.replace(/<meta[^>]+http-equiv=['"]?refresh['"]?[^>]*>/gi, '');
-                html = html.replace(/window\.location\.replace/gi, 'console.log');
-                html = html.replace(/window\.location\.href\s*=/gi, 'console.log=');
-
-                const urlObj = new URL(art.link);
-                const baseUrl = urlObj.protocol + "//" + urlObj.host + "/";
-                
-                if (html.toLowerCase().includes('<head>')) { html = html.replace(/<head>/i, `<head><base href="${baseUrl}">`); } 
-                else { html = `<base href="${baseUrl}">` + html; }
-                
+                html = html.replace(/<meta[^>]+http-equiv=['"]?refresh['"]?[^>]*>/gi, ''); html = html.replace(/window\.location\.replace/gi, 'console.log'); html = html.replace(/window\.location\.href\s*=/gi, 'console.log=');
+                const urlObj = new URL(art.link); const baseUrl = urlObj.protocol + "//" + urlObj.host + "/";
+                if (html.toLowerCase().includes('<head>')) { html = html.replace(/<head>/i, `<head><base href="${baseUrl}">`); } else { html = `<base href="${baseUrl}">` + html; }
                 const scriptFix = `<script> window.onload = function() { const links = document.querySelectorAll('a'); links.forEach(l => l.setAttribute('target', '_blank')); }; <\/script>`;
                 html = html.replace(/<\/body>/i, scriptFix + '</body>');
                 
-                iframe.srcdoc = html;
-                iframe.onload = () => { banner.innerHTML = `✅ Orijinal site yüklendi.`; setTimeout(()=>{ banner.style.display='none'; }, 3000); };
-                
+                iframe.srcdoc = html; iframe.onload = () => { banner.innerHTML = `✅ Orijinal site yüklendi.`; setTimeout(()=>{ banner.style.display='none'; }, 3000); };
             } catch (err) {
-                textContainer.innerHTML = `
-                    <div style="background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 15px; margin-top: 15px; border-radius: 0 var(--radius-md) var(--radius-md) 0;">
-                        <strong style="color:var(--warning);">⚠️ Tam Metin Koruması:</strong> 
-                        <span style="color:var(--text-muted); font-size:0.95rem;">Bu site tam metnin çekilmesini engelliyor. Yukarıdan orijinal site görünümüne geçebilirsiniz.</span>
-                    </div>
-                `;
+                textContainer.innerHTML = `<div style="background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 15px; margin-top: 15px; border-radius: 0 var(--radius-md) var(--radius-md) 0;"><strong style="color:var(--warning);">⚠️ Tam Metin Koruması:</strong> <span style="color:var(--text-muted); font-size:0.95rem;">Bu site tam metnin çekilmesini engelliyor. Yukarıdan orijinal site görünümüne geçebilirsiniz.</span></div>`;
                 banner.innerHTML = `<span style="color:var(--warning);">⚠️ Bu site içeride görüntülenmeye izin vermiyor.</span> <a href="${art.link}" target="_blank" style="background:var(--accent); color:white; padding:4px 12px; border-radius:4px; text-decoration:none; font-weight:bold; font-size:0.75rem;">↗️ Tarayıcıda Aç</a>`;
                 iframe.removeAttribute('srcdoc');
             }
         }
 
         function closeModal() {
-            document.getElementById('newsModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-            document.getElementById('fullTextContainer').innerHTML = ''; 
-            const iframe = document.getElementById('modalIframe');
-            iframe.removeAttribute('srcdoc'); iframe.src = 'about:blank'; 
-            document.getElementById('iframeBanner').style.display = 'flex'; 
+            document.getElementById('newsModal').style.display = 'none'; document.body.style.overflow = 'auto'; document.getElementById('fullTextContainer').innerHTML = ''; 
+            const iframe = document.getElementById('modalIframe'); iframe.removeAttribute('srcdoc'); iframe.src = 'about:blank'; document.getElementById('iframeBanner').style.display = 'flex'; 
         }
-
         window.onclick = (e) => { if(e.target.className === 'modal') closeModal(); };
     </script>
 </body>
