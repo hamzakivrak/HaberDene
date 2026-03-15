@@ -95,6 +95,9 @@
         .card-img-wrapper::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(30,41,59,1) 0%, rgba(30,41,59,0) 100%); pointer-events: none; }
 
         .source-badge { position: absolute; top: 15px; left: 15px; background: var(--primary); color: white; padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.4); pointer-events: none; letter-spacing: 0.5px; }
+                /* Kart Üzerindeki Dış Bağlantı Butonu */
+        .external-link-btn { position: absolute; top: 15px; right: 15px; background: rgba(15, 23, 42, 0.6); color: white; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1rem; z-index: 10; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.1); }
+        .external-link-btn:hover { background: var(--accent); transform: scale(1.1); border-color: var(--accent); }
         
         .news-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--surface); z-index: 2; }
         .news-content h3 { font-size: 1.1rem; margin-bottom: 12px; line-height: 1.5; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 700; }
@@ -587,10 +590,25 @@
                 const card = document.createElement('div'); card.className = 'news-card'; card.onclick = () => openModal(art);
                 const dateObj = art.date; const today = new Date();
                 let dateStr = (dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth()) ? "Bugün, " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }) + " " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                        function renderNextBatch() {
+            const grid = document.getElementById('newsGrid');
+            const nextBatch = filteredArticles.slice(displayedCount, displayedCount + ITEMS_PER_PAGE);
+            nextBatch.forEach(art => {
+                const card = document.createElement('div'); card.className = 'news-card'; card.onclick = () => openModal(art);
+                const dateObj = art.date; const today = new Date();
+                let dateStr = (dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth()) ? "Bugün, " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }) + " " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                
+                // DEĞİŞEN KISIM BURASI (En başa external-link-btn eklendi)
                 card.innerHTML = `
+                    <a href="${art.link}" target="_blank" class="external-link-btn" onclick="event.stopPropagation()" title="Orijinal Sitede Aç">↗️</a>
                     <div class="card-img-wrapper img-skeleton"><div class="source-badge">${art.source}</div><img src="${art.image}" onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" onerror="this.src='${PLACEHOLDER_IMG}'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');"></div>
                     <div class="news-content"><h3>${art.title}</h3><div class="meta"><span>🕒 ${dateStr}</span><span class="read-more">Haberi Oku →</span></div></div>
                 `;
+                grid.appendChild(card);
+            });
+            displayedCount += nextBatch.length;
+        }
+
                 grid.appendChild(card);
             });
             displayedCount += nextBatch.length;
