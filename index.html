@@ -19,6 +19,7 @@
         body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; padding: 0 15px 20px 15px; overflow-anchor: auto; -webkit-font-smoothing: antialiased; overscroll-behavior-y: contain; transition: padding 0.3s; }
         .container { max-width: 1400px; margin: 0 auto; position: relative; }
         
+        /* Yukarıdan Çek Yenile (Pull to Refresh) */
         .pull-to-refresh { position: fixed; top: -60px; left: 50%; transform: translateX(-50%); background: var(--surface); color: var(--primary); padding: 10px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid var(--surface-light); font-weight: 700; font-size: 0.95rem; z-index: 2000; opacity: 0; display: flex; align-items: center; gap: 10px; pointer-events: none; transition: opacity 0.2s ease; }
 
         header { text-align: center; padding: 30px 0 20px; transition: all 0.3s; }
@@ -57,6 +58,8 @@
         .cat-btn { white-space: nowrap; padding: 8px 18px; background: var(--surface-light); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .cat-btn:hover { background: rgba(255,255,255,0.1); color: white; }
         .cat-btn.active { background: var(--primary); border-color: var(--primary); color: white; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); }
+        .cat-btn-archive { border-color: #10b981; color: #10b981; }
+        .cat-btn-archive.active { background: #10b981; border-color: #10b981; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
 
         .filter-section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; display: flex; justify-content: space-between; cursor: pointer; user-select: none; padding: 5px 0; }
         .filter-section-title:hover { color: white; }
@@ -78,13 +81,17 @@
         .add-rss-form input { padding: 12px 15px; border-radius: 8px; border: 1px solid var(--surface-light); background: var(--bg-dark); color: white; outline: none; }
         .add-rss-form input:focus { border-color: var(--accent); }
         .add-rss-form button { padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .add-rss-form button:hover { background: #2563eb; }
 
         button.fetch-btn { width: 100%; background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px; border-radius: var(--radius-md); font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2); }
         button.fetch-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4); }
 
-        /* DİNAMİK MAZGAL, LİSTE VE SHORTS GÖRÜNÜMLERİ */
-        .news-grid { display: grid; gap: 20px; transition: all 0.3s ease; }
+        /* KAYDIRMA (SWIPE) TASARIMLARI */
+        .news-grid { display: grid; gap: 20px; transition: all 0.3s ease; overflow-x: hidden; }
+        .swipe-wrapper { position: relative; border-radius: var(--radius-lg); background: var(--surface-light); overflow: hidden; display: block; }
+        .swipe-bg { position: absolute; top:0; bottom:0; width: 50%; display: flex; align-items: center; font-weight: 800; font-size: 1.2rem; color: white; z-index: 1; }
+        .swipe-bg-left { left: 0; background: #10b981; padding-left: 20px; justify-content: flex-start; } /* Sağa kaydırılınca (Arşiv) */
+        .swipe-bg-right { right: 0; background: var(--danger); padding-right: 20px; justify-content: flex-end; } /* Sola kaydırılınca (Okundu) */
+        
         .grid-small { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
         .grid-medium { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
         .grid-large { grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); }
@@ -95,9 +102,10 @@
         .grid-list .news-content { padding: 10px 15px; justify-content: center; }
         .grid-list .news-content h3 { font-size: 1.05rem; -webkit-line-clamp: 2; margin-bottom: 5px; }
 
-        .news-card { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; user-select: none; }
-        .news-card.read-article { opacity: 0.5; filter: grayscale(50%); } /* Okunanlar soluk görünür */
-        .news-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); opacity: 1; filter: none; }
+        .news-card { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; user-select: none; z-index: 2; width: 100%; }
+        .news-card.swiping { transition: none; } /* Kaydırma anında animasyon iptal */
+        .news-card.read-article { opacity: 0.5; filter: grayscale(50%); } 
+        .news-card:hover { border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); opacity: 1; filter: none; }
         
         .external-link-btn { position: absolute; top: 12px; right: 12px; background: rgba(15, 23, 42, 0.7); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1rem; z-index: 15; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.2); }
         .external-link-btn:hover { background: var(--accent); transform: scale(1.1); border-color: var(--accent); }
@@ -108,36 +116,37 @@
 
         .img-skeleton { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-light) 50%, var(--surface) 75%); background-size: 200% 100%; animation: skeletonLoading 1.5s infinite; }
         @keyframes skeletonLoading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        .news-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease; }
+        .news-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease; pointer-events: none; }
         .news-card:hover img { transform: scale(1.05); }
         .card-img-wrapper::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; background: linear-gradient(to top, rgba(30,41,59,1) 0%, rgba(30,41,59,0) 100%); pointer-events: none; }
 
         .source-badge { position: absolute; top: 12px; left: 12px; background: var(--primary); color: white; padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.4); cursor: pointer; transition: 0.2s; pointer-events: auto; }
         .source-badge:hover { transform: scale(1.05); background: white; color: var(--primary); }
         
-        .news-content { padding: 15px 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--surface); z-index: 2; }
+        .news-content { padding: 15px 20px; flex-grow: 1; display: flex; flex-direction: column; background: var(--surface); z-index: 2; pointer-events: none; }
         .grid-small .news-content { padding: 10px 15px; }
         .news-content h3 { font-size: 1.05rem; margin-bottom: 10px; line-height: 1.5; color: var(--text-main); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 700; }
         .grid-large .news-content h3 { font-size: 1.3rem; -webkit-line-clamp: 4; }
-        .meta { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+        .meta { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; pointer-events: auto; }
         .read-more { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
 
         /* SHORTS TAM EKRAN MODU */
         body.shorts-mode { padding: 0; overflow-x: hidden; }
         body.shorts-mode header { display: none; }
         body.shorts-mode .controls-wrapper { margin-bottom: 0; border-radius: 0; border-left: none; border-right: none; }
-        body.shorts-mode .grid-shorts { 
+        body.shorts-mode .news-grid { 
             display: flex !important; flex-direction: column; gap: 0; 
-            height: calc(100vh - 54px); /* Menü kapalı yüksekliği düşülür */
+            height: calc(100vh - 54px); 
             overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; 
         }
-        body.shorts-mode .grid-shorts .news-card { 
+        body.shorts-mode .swipe-wrapper { 
             flex: 0 0 100%; height: calc(100vh - 54px); 
-            scroll-snap-align: start; border-radius: 0; border: none; border-bottom: 1px solid rgba(255,255,255,0.1);
+            scroll-snap-align: start; border-radius: 0; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 0;
         }
-        body.shorts-mode .grid-shorts .card-img-wrapper { height: 60%; }
-        body.shorts-mode .grid-shorts .news-content { height: 40%; justify-content: center; }
-        body.shorts-mode .grid-shorts .news-content h3 { font-size: 1.4rem; -webkit-line-clamp: 5; }
+        body.shorts-mode .news-card { height: 100%; border-radius: 0; border: none; }
+        body.shorts-mode .card-img-wrapper { height: 60%; }
+        body.shorts-mode .news-content { height: 40%; justify-content: center; }
+        body.shorts-mode .news-content h3 { font-size: 1.4rem; -webkit-line-clamp: 5; }
 
         /* MODAL STİLLERİ */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
@@ -230,11 +239,10 @@
                 </div>
 
                 <div>
-                    <div class="filter-section-title">
-                        <span>📚 Hızlı Konu Filtreleri</span>
-                    </div>
+                    <div class="filter-section-title"><span>📚 Hızlı Konu Filtreleri</span></div>
                     <div class="category-scroll" id="catWrapper">
                         <button class="cat-btn active" onclick="filterCategory('', this)">Tümü</button>
+                        <button class="cat-btn cat-btn-archive" onclick="filterCategory('Arşiv', this)">💾 Arşiv</button>
                         <button class="cat-btn" onclick="filterCategory('Gündem', this)">📰 Gündem</button>
                         <button class="cat-btn" onclick="filterCategory('Son Dakika', this)">🔥 Son Dakika</button>
                         <button class="cat-btn" onclick="filterCategory('Bilim', this)">🧬 Bilim</button>
@@ -257,7 +265,7 @@
                 <div>
                     <div class="filter-section-title" onclick="document.getElementById('filterList').classList.toggle('show')">
                         <span>📰 Kaynak Filtreleri (Genişlet)</span>
-                        <div><button class="select-all-btn" onclick="toggleAllSources(event)">Tümünü Seç/Kaldır</button> <span style="margin-left:5px;">▼</span></div>
+                        <div><button class="select-all-btn" onclick="toggleAllSourcesState(event)">Tümünü Seç/Kaldır</button> <span style="margin-left:5px;">▼</span></div>
                     </div>
                     <div class="chip-container" id="filterList"></div>
                 </div>
@@ -271,7 +279,7 @@
                             <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">🔍 Site Adresi (Örn: webtekno.com) veya Konu (Örn: Yapay Zeka) girin:</div>
                             <div style="display:flex; gap:10px;">
                                 <input type="text" id="searchRssUrl" placeholder="Konu veya Site URL..." style="flex:1;">
-                                <button onclick="findRssFromUrl()" style="background:var(--accent); width:auto; padding: 10px 20px;">Bul</button>
+                                <button onclick="findRssFromUrl()" style="background:var(--accent); width:auto; padding: 10px 20px;">Bul / Ekle</button>
                             </div>
                             <div id="rssSearchResults" style="display:flex; flex-direction:column; gap:5px; margin-top:10px;"></div>
                         </div>
@@ -307,15 +315,16 @@
             <div class="modal-body" style="padding: 20px; cursor: default;">
                 <input type="text" id="popupSearchInput" placeholder="Kelime, Kaynak veya Konu arayın..." onkeyup="syncSearchInputs(this.value)" style="width:100%; padding:12px 15px; border-radius:8px; border:1px solid var(--surface-light); background:var(--bg-dark); color:white; margin-bottom:15px; outline:none; font-size:1rem;">
                 
-                <div style="background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="background: rgba(255,255,255,0.05); padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; display:flex; justify-content:space-between; align-items:center;">
                     <label style="cursor:pointer; display:flex; align-items:center; gap:8px; color:white; font-weight:600;">
                         <input type="checkbox" id="showReadPopup" onchange="toggleReadVisibility(this.checked)" style="width:18px; height:18px; accent-color:var(--primary);">
-                        👁️ Okunan Haberleri Gizleme
+                        👁️ Okunanları Gizleme
                     </label>
+                    <button onclick="popupRefresh()" style="background:var(--surface-light); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">🔄 Yenile</button>
                 </div>
 
                 <div style="margin-bottom: 15px; display:flex; justify-content:space-between;">
-                    <button class="select-all-btn" onclick="toggleAllSourcesState()">Tümünü Seç / Kaldır</button>
+                    <button class="select-all-btn" onclick="toggleAllSourcesState(event)">Tümünü Seç / Kaldır</button>
                 </div>
                 <div class="chip-container show" id="popupFilterList"></div>
                 <button onclick="closeSourceModal()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; font-weight:bold; margin-top:20px; cursor:pointer;">Uygula ve Kapat</button>
@@ -396,9 +405,10 @@
             { id: 'dailysabah', name: 'Daily Sabah', url: 'https://www.dailysabah.com/rss' }
         ];
 
-        let currentLang = 'TR'; let currentCategory = '';
+        let currentLang = 'TR'; let currentCategory = ''; let isArchiveView = false;
         let RSS_FEEDS = []; let allArticles = []; let filteredArticles = []; 
         let activeSources = []; 
+        let archivedArticles = JSON.parse(localStorage.getItem('archivedArticlesList')) || [];
         let readArticles = JSON.parse(localStorage.getItem('readArticlesList')) || [];
         let showReadArticles = false;
         let displayedCount = 0; let isFetchingRefresh = false; const ITEMS_PER_PAGE = 20;
@@ -407,7 +417,7 @@
             loadCustomFeeds(); 
             document.getElementById('toggleIcon').innerText = 'Genişlet ▼'; 
             
-            // 1. Önce hafızadaki (cache) haberleri yükle ve hemen göster (0 saniye)
+            // 1. Önce hafızadaki (cache) haberleri yükle ve hemen göster (Sıfır saniye)
             const savedData = JSON.parse(localStorage.getItem('savedNewsArticles')) || [];
             if(savedData.length > 0) {
                 allArticles = savedData.map(a => { a.date = new Date(a.timestamp); return a; });
@@ -415,12 +425,11 @@
                 // 2. Ardından arka planda sessizce yeni güncellemeleri ara
                 setTimeout(() => { checkNewArticlesInBackground(true); }, 1500);
             } else {
-                // Hiç kayıt yoksa sıfırdan çek
                 fetchAllRSS(true); 
             }
         };
 
-        // YENİ: Boşluğa tıklayınca arama filtresini kapat (Tıklanan yer buton veya input değilse)
+        // BOŞLUĞA TIKLAYINCA FİLTRE MENÜSÜNÜ KAPATMA
         document.addEventListener('click', (e) => {
             const wrapper = document.getElementById('controlsWrapper');
             if (!wrapper.classList.contains('collapsed')) {
@@ -431,7 +440,6 @@
             }
         });
 
-        // Toggle butonu (Manuel aç/kapat işlemi)
         function toggleControls(event) {
             if(event) event.stopPropagation();
             const wrapper = document.getElementById('controlsWrapper'); const icon = document.getElementById('toggleIcon');
@@ -439,7 +447,7 @@
             else { wrapper.classList.add('collapsed'); icon.innerText = 'Genişlet ▼'; }
         }
 
-        // YENİ: Okunan Haberleri Göster/Gizle
+        // OKUNANLARI GİZLE/GÖSTER SİSTEMİ
         function toggleReadVisibility(show) {
             showReadArticles = show;
             document.getElementById('showReadMain').checked = show;
@@ -447,19 +455,27 @@
             handleSearch();
         }
 
-        function markAsRead(link) {
+        function markAsRead(link, fromSwipe = false) {
             if (!readArticles.includes(link)) {
                 readArticles.push(link);
                 localStorage.setItem('readArticlesList', JSON.stringify(readArticles));
-                if (!showReadArticles) {
-                    handleSearch(true); // Listeyi sessizce yenile ve okunanı kaldır
-                } else {
-                    handleSearch(true); // Sadece soluk yapsın
-                }
+                if (!fromSwipe && !showReadArticles) handleSearch(true);
+                else if (!fromSwipe) handleSearch(true); // Soluk efekti uygula
             }
         }
 
-        // YENİ: Shorts modu için gövde sınıfını değiştirir
+        function archiveArticleByLink(link) {
+            const art = allArticles.find(a => a.link === link) || archivedArticles.find(a => a.link === link);
+            if(!art) return;
+            if(!archivedArticles.find(a => a.link === link)) {
+                archivedArticles.push(art);
+                localStorage.setItem('archivedArticlesList', JSON.stringify(archivedArticles));
+            }
+            document.getElementById('toastText').innerText = `💾 Haber Arşive Eklendi!`;
+            document.getElementById('toastNotification').classList.add('show'); setTimeout(() => { document.getElementById('toastNotification').classList.remove('show'); }, 3000);
+        }
+
+        // GÖRÜNÜM VE SHORTS SİSTEMİ
         function setGridSize(size, btnElement) {
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
@@ -467,17 +483,19 @@
             const grid = document.getElementById('newsGrid');
             grid.className = 'news-grid grid-' + size;
             
-            if (size === 'shorts') {
-                document.body.classList.add('shorts-mode');
-            } else {
-                document.body.classList.remove('shorts-mode');
-            }
+            if (size === 'shorts') document.body.classList.add('shorts-mode');
+            else document.body.classList.remove('shorts-mode');
         }
 
-        // POP-UP arama senkronizasyonu
+        // POP-UP İÇİ ARAMA SENKRONİZASYONU
         function syncSearchInputs(val) {
             document.getElementById('searchInput').value = val;
             handleSearch();
+        }
+
+        function popupRefresh() {
+            document.getElementById('popupFilterList').innerHTML = '<div style="color:var(--accent); width:100%; text-align:center; padding:20px; font-weight:bold;">🔄 Kaynaklar ağda taranıyor...</div>';
+            checkNewArticlesInBackground(true).then(() => { renderPopupChips(); });
         }
 
         function switchLangTab(lang) {
@@ -489,11 +507,12 @@
         }
 
         function filterCategory(cat, btnElement) {
+            isArchiveView = (cat === 'Arşiv');
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
             currentCategory = cat; 
-            document.getElementById('searchInput').value = cat;
-            document.getElementById('popupSearchInput').value = cat;
+            document.getElementById('searchInput').value = isArchiveView ? "" : cat;
+            document.getElementById('popupSearchInput').value = isArchiveView ? "" : cat;
             handleSearch();
         }
         
@@ -542,10 +561,11 @@
             renderPopupChips(); 
         }
 
-        function toggleAllSourcesState() {
+        function toggleAllSourcesState(event) {
+            if(event) event.stopPropagation();
             if(activeSources.length === RSS_FEEDS.length) { activeSources = []; } 
             else { activeSources = RSS_FEEDS.map(f => f.name); }
-            renderPopupChips();
+            renderPopupChips(); handleSearch();
         }
 
         function renderPopupChips() {
@@ -559,12 +579,28 @@
             });
         }
 
-        let touchStartY = 0; let pullDistance = 0;
+        // PULL TO REFRESH & SWIPE TO ACTION SİSTEMİ
+        let touchStartX = 0; let touchStartY = 0; 
+        let pullDistance = 0;
+        let swipingCard = null; let swipeCurrentX = 0; let isVerticalScroll = false;
+        
         const ptrEl = document.getElementById('pullToRefresh'); const ptrIcon = document.getElementById('ptrIcon'); const ptrText = document.getElementById('ptrText');
 
-        window.addEventListener('touchstart', e => { if (window.scrollY === 0) touchStartY = e.touches[0].clientY; }, {passive: true});
-        window.addEventListener('touchmove', e => {
-            if (window.scrollY === 0 && touchStartY > 0) {
+        document.addEventListener('touchstart', e => { 
+            // Pull to refresh start
+            if (window.scrollY <= 5) touchStartY = e.touches[0].clientY; 
+            
+            // Swipe card start
+            const card = e.target.closest('.news-card');
+            if(card) {
+                swipingCard = card; touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
+                swipeCurrentX = 0; isVerticalScroll = false; card.classList.add('swiping');
+            }
+        }, {passive: true});
+
+        document.addEventListener('touchmove', e => {
+            // Pull to refresh move
+            if (window.scrollY <= 5 && touchStartY > 0 && !swipingCard) {
                 pullDistance = e.touches[0].clientY - touchStartY;
                 if (pullDistance > 0 && pullDistance < 150) {
                     ptrEl.style.opacity = Math.min(pullDistance / 80, 1); ptrEl.style.transform = `translateX(-50%) translateY(${pullDistance * 0.5}px)`;
@@ -572,10 +608,43 @@
                     else { ptrIcon.innerText = "⬇️"; ptrText.innerText = "Yenilemek için çekin"; }
                 }
             }
+
+            // Swipe card move
+            if (swipingCard) {
+                const diffX = e.touches[0].clientX - touchStartX;
+                const diffY = e.touches[0].clientY - touchStartY;
+                if(!isVerticalScroll && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 10) {
+                    isVerticalScroll = true; swipingCard.style.transform = `translateX(0px)`; swipingCard.classList.remove('swiping'); swipingCard = null; return;
+                }
+                if(isVerticalScroll) return;
+                swipeCurrentX = diffX; swipingCard.style.transform = `translateX(${swipeCurrentX}px)`;
+            }
         }, {passive: true});
-        window.addEventListener('touchend', () => {
-            if (pullDistance > 80 && !isFetchingRefresh) { ptrIcon.innerText = "⏳"; ptrText.innerText = "Ağ taranıyor..."; checkNewArticlesInBackground(true); } 
+
+        document.addEventListener('touchend', e => {
+            // Pull to refresh end
+            if (pullDistance > 80 && !isFetchingRefresh && !swipingCard) { ptrIcon.innerText = "⏳"; ptrText.innerText = "Ağ taranıyor..."; checkNewArticlesInBackground(true); } 
             else { resetPullToRefresh(); }
+
+            // Swipe card end
+            if (swipingCard) {
+                const wrapper = swipingCard.closest('.swipe-wrapper');
+                const link = wrapper.dataset.link;
+                swipingCard.classList.remove('swiping');
+
+                if(swipeCurrentX > 100) {
+                    // Sağa kaydırma: Arşivle
+                    swipingCard.style.transform = `translateX(100%)`;
+                    setTimeout(() => { archiveArticleByLink(link); wrapper.style.display = 'none'; }, 300);
+                } else if(swipeCurrentX < -100) {
+                    // Sola kaydırma: Okundu işaretle
+                    swipingCard.style.transform = `translateX(-100%)`;
+                    setTimeout(() => { markAsRead(link, true); wrapper.style.display = 'none'; }, 300);
+                } else {
+                    swipingCard.style.transform = `translateX(0px)`;
+                }
+                swipingCard = null;
+            }
         });
         function resetPullToRefresh() { ptrEl.style.transform = `translateX(-50%) translateY(0)`; ptrEl.style.opacity = 0; touchStartY = 0; pullDistance = 0; setTimeout(() => { ptrIcon.innerText = "⬇️"; ptrText.innerText = "Yenilemek için çekin"; }, 300); }
 
@@ -591,7 +660,7 @@
             }
         });
 
-        // Shorts modu için container içi dikey kaydırma dinleyicisi
+        // Shorts modu için container içi dikey kaydırma
         document.addEventListener('DOMContentLoaded', () => {
             const newsGrid = document.getElementById('newsGrid');
             newsGrid.addEventListener('scroll', () => {
@@ -688,6 +757,7 @@
             return [];
         }
 
+        // YAPAY ZEKA GÖRSEL VE METİN DEDEKTÖRÜ
         function parseXMLToArticles(textData, feed) {
             const parser = new DOMParser(); 
             const xmlDoc = parser.parseFromString(textData, "text/xml"); 
@@ -706,7 +776,7 @@
                 if (contentEnc.length === 0) contentEnc = item.getElementsByTagNameNS("*", "encoded");
                 let fullText = desc + " " + (contentEnc.length > 0 ? contentEnc[0].textContent : "");
                 
-                let pubDate = new Date(); const pubNodes = item.getElementsByTagName('pubDate'); if(pubNodes.length > 0) { const parsed = new Date(pubNodes[0].textContent); if(!isNaN(parsed.getTime())) pubDate = parsed; }
+                let pubDate = new Date(); const pubNodes = item.getElementsByTagName('pubDate'); if(pubNodes.length > 0) { const parsed = new Date(pubNodes[0].textContent); if(!isNaN(pubDate.getTime())) pubDate = parsed; }
                 
                 let image = ""; 
                 const enclosure = item.querySelector("enclosure"); 
@@ -733,10 +803,9 @@
             return result;
         }
 
-        // VERİLERİ YEREL HAFIZAYA KAYDET
+        // VERİLERİ YEREL HAFIZAYA (ÇEVRİMDIŞI) KAYDET
         function saveToLocalMemory() {
-            // Kotayı aşmamak için sadece en yeni 300 haberi kaydeder
-            const toSave = allArticles.slice(0, 300);
+            const toSave = allArticles.slice(0, 300); // Kotayı şişirmemek için en yeni 300 haberi kaydeder
             localStorage.setItem('savedNewsArticles', JSON.stringify(toSave));
         }
 
@@ -766,7 +835,7 @@
             handleSearch(); 
         }
 
-        // Arka planda sessizce yeni haberleri tarar ve mevcut listeye ekler
+        // ARKA PLANDA SESSİZ GÜNCELLEME
         async function checkNewArticlesInBackground(isTopRefresh = false) {
             isFetchingRefresh = true; const endSpinner = document.getElementById('endRefreshSpinner'); let newCount = 0;
             const fetchPromises = RSS_FEEDS.map(async (feed) => {
@@ -791,15 +860,22 @@
             isFetchingRefresh = false;
         }
 
+        // FİLTRELEME VE ZEKİ ARAMA MOTORU
         function handleSearch(isSilentRefresh = false) {
             const searchText = trToLowerCase(document.getElementById('searchInput').value.trim()); const searchTerms = searchText.split(' ').filter(t => t.length > 0);
             document.getElementById('popupSearchInput').value = document.getElementById('searchInput').value; 
 
-            filteredArticles = allArticles.filter(art => {
-                // Okunmuş haberleri filtreleme zekası
-                if (!showReadArticles && readArticles.includes(art.link)) return false;
+            // Eğer arşiv görünümündeysek veri havuzu olarak arşivi kullan
+            let sourceArray = isArchiveView ? archivedArticles : allArticles;
 
-                const sourceMatch = activeSources.includes(art.source); 
+            filteredArticles = sourceArray.filter(art => {
+                // Arşiv modu değilse okunanları gizleme zekası
+                if (!isArchiveView && !showReadArticles && readArticles.includes(art.link)) return false;
+
+                // Arşiv modunda kaynak kontrolünü es geç ki tüm arşiv gözüksün
+                const sourceMatch = isArchiveView ? true : activeSources.includes(art.source); 
+                if(!sourceMatch) return false;
+
                 const titleLower = trToLowerCase(art.title); 
                 const descLower = trToLowerCase(art.description);
                 const catLower = art.categories ? trToLowerCase(art.categories.join(' ')) : "";
@@ -807,7 +883,7 @@
                 
                 const searchSpace = titleLower + " " + descLower + " " + catLower + " " + sourceLower;
                 const textMatch = searchTerms.length === 0 || searchTerms.every(term => searchSpace.includes(term)); 
-                return sourceMatch && textMatch;
+                return textMatch;
             });
             
             if (!isSilentRefresh) { document.getElementById('newsGrid').innerHTML = ''; displayedCount = 0; } 
@@ -816,16 +892,34 @@
             renderNextBatch();
         }
 
+        // HABER KARTLARINI ÇİZME
         function renderNextBatch() {
             const grid = document.getElementById('newsGrid');
             const nextBatch = filteredArticles.slice(displayedCount, displayedCount + ITEMS_PER_PAGE);
             nextBatch.forEach(art => {
-                const card = document.createElement('div'); 
+                const wrapper = document.createElement('div');
+                wrapper.className = 'swipe-wrapper';
+                wrapper.dataset.link = art.link;
                 
-                // Eğer okunanları göster açıksa ve bu haber okunduysa soluk yap
                 const isRead = readArticles.includes(art.link);
-                card.className = `news-card ${isRead ? 'read-article' : ''}`; 
+                const isArchived = !!archivedArticles.find(a=> a.link === art.link);
                 
+                const dateObj = new Date(art.date); const today = new Date();
+                let dateStr = (dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth()) ? "Bugün, " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }) + " " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                
+                // Arka plan swipe alanları ve Kart HTML'i
+                wrapper.innerHTML = `
+                    <div class="swipe-bg swipe-bg-left">💾 ${isArchived ? 'Arşivlendi' : 'Arşivle'}</div>
+                    <div class="swipe-bg swipe-bg-right">👁️ Gizle</div>
+                    <div class="news-card ${isRead && !isArchiveView ? 'read-article' : ''}">
+                        <a href="${art.link}" target="_blank" class="external-link-btn" onclick="event.stopPropagation(); markAsRead('${art.link}');" title="Orijinal Sitede Aç">↗️</a>
+                        <div class="card-img-wrapper img-skeleton"><div class="source-badge" onclick="openSourceFilterModal(event)">${art.source}</div><img src="${art.image}" onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" onerror="this.src='${PLACEHOLDER_IMG}'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');"></div>
+                        <div class="news-content"><h3>${art.title}</h3><div class="meta"><span>🕒 ${dateStr}</span><span class="read-more">Haberi Oku →</span></div></div>
+                    </div>
+                `;
+
+                // TEK TIK / ÇİFT TIK SİSTEMİ
+                const card = wrapper.querySelector('.news-card');
                 let clickTimer = null;
                 card.onclick = (e) => {
                     if(e.target.tagName === 'A' || e.target.closest('.source-badge')) return;
@@ -836,18 +930,12 @@
                     }
                 };
 
-                const dateObj = art.date; const today = new Date();
-                let dateStr = (dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth()) ? "Bugün, " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }) + " " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-                card.innerHTML = `
-                    <a href="${art.link}" target="_blank" class="external-link-btn" onclick="event.stopPropagation(); markAsRead('${art.link}');" title="Orijinal Sitede Aç">↗️</a>
-                    <div class="card-img-wrapper img-skeleton"><div class="source-badge" onclick="openSourceFilterModal(event)">${art.source}</div><img src="${art.image}" onload="this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');" onerror="this.src='${PLACEHOLDER_IMG}'; this.style.opacity=1; this.parentElement.classList.remove('img-skeleton');"></div>
-                    <div class="news-content"><h3>${art.title}</h3><div class="meta"><span>🕒 ${dateStr}</span><span class="read-more">Haberi Oku →</span></div></div>
-                `;
-                grid.appendChild(card);
+                grid.appendChild(wrapper);
             });
             displayedCount += nextBatch.length;
         }
 
+        // MODAL (OKUMA PENCERESİ) FONKSİYONLARI
         function switchTab(tab) {
             document.getElementById('tabReader').classList.remove('active'); document.getElementById('tabWeb').classList.remove('active');
             if(tab === 'reader') { document.getElementById('tabReader').classList.add('active'); document.getElementById('readerView').style.display = 'block'; document.getElementById('iframeView').style.display = 'none'; } 
@@ -902,12 +990,13 @@
             const iframe = document.getElementById('modalIframe'); iframe.removeAttribute('srcdoc'); iframe.src = 'about:blank'; document.getElementById('iframeBanner').style.display = 'flex'; 
         }
 
+        // ÜÇ KERE DOKUNARAK PENCERE KAPATMA ZEKASI
         let tapCount = 0; let tapTimeout;
         document.getElementById('modalBodyArea').addEventListener('click', (e) => {
             if(e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return; 
             tapCount++; clearTimeout(tapTimeout);
             if(tapCount >= 3) { closeModal(); tapCount = 0; } 
-            else { tapTimeout = setTimeout(() => { tapCount = 0; }, 400); }
+            else { tapTimeout = setTimeout(() => { tapCount = 0; }, 600); } // 600ms'ye çıkarıldı, daha rahat tıklanır
         });
 
         window.onclick = (e) => { 
