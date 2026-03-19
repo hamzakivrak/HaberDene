@@ -24,29 +24,24 @@
         body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; padding: 0 15px 20px 15px; overflow-anchor: auto; -webkit-font-smoothing: antialiased; overscroll-behavior-y: contain; transition: background 0.5s ease; }
         .container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 5; }
         
-        /* --- YENİ TEMA TASARIMLARI --- */
-        /* 1. CAM (GLASSMORPHISM) */
+        /* TEMALAR */
         body[data-theme="glass"] { --bg-dark: #000; background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop') center/cover fixed; }
         body[data-theme="glass"] .news-card, body[data-theme="glass"] .controls-wrapper, body[data-theme="glass"] .modal-content { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
         body[data-theme="glass"] .news-content { background: transparent; }
         
-        /* 2. METALİK */
         body[data-theme="metallic"] { --bg-dark: #1a1a1a; background: radial-gradient(circle at 50% 0%, #4a4a4a, #111 80%); }
         body[data-theme="metallic"] .news-card, body[data-theme="metallic"] .controls-wrapper { background: linear-gradient(145deg, #333, #222); border: 1px solid #555; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 6px rgba(0,0,0,0.5); }
         body[data-theme="metallic"] .news-content { background: transparent; }
 
-        /* 3. HOLOGRAM (Yanar Döner) */
         body[data-theme="hologram"] { --bg-dark: #0f0c29; background: linear-gradient(135deg, #0f0c29, #302b63, #240b36); }
         body[data-theme="hologram"] .news-card, body[data-theme="hologram"] .controls-wrapper { background: linear-gradient(125deg, rgba(255,0,128,0.15), rgba(0,255,255,0.15)); border: 1px solid rgba(0,255,255,0.3); backdrop-filter: blur(10px); }
         body[data-theme="hologram"] .news-content { background: transparent; }
 
-        /* 4. HAREKETLİ (Animated Gradient) */
         @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
         body[data-theme="animated"] { background: linear-gradient(-45deg, #1e3a8a, #4c1d95, #0f172a, #064e3b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; }
         body[data-theme="animated"] .news-card, body[data-theme="animated"] .controls-wrapper { background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
         body[data-theme="animated"] .news-content { background: transparent; }
 
-        /* 5. NEON (SİMLİ / CYBER) */
         body[data-theme="cyber"] { background-color: #050505; background-image: radial-gradient(rgba(34, 211, 238, 0.15) 1px, transparent 1px); background-size: 20px 20px; }
         body[data-theme="cyber"] .news-card, body[data-theme="cyber"] .controls-wrapper { background: #0a0a0a; border: 1px solid rgba(34, 211, 238, 0.4); box-shadow: 0 0 10px rgba(34, 211, 238, 0.15); }
         body[data-theme="cyber"] .news-content { background: transparent; }
@@ -105,7 +100,8 @@
         .filter-section-title:hover { color: white; }
         .select-all-btn { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.85rem; font-weight: 600; }
 
-        .chip-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
+        .chip-container { display: none; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
+        .chip-container.show { display: flex; animation: fadeIn 0.3s ease; }
         .chip { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--surface-light); border-radius: 30px; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; user-select: none; }
         .chip input { display: none; }
         .chip:hover { border-color: var(--text-muted); color: var(--text-main); }
@@ -126,11 +122,13 @@
         button.fetch-btn { width: 100%; background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px; border-radius: var(--radius-md); font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2); }
         button.fetch-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4); }
 
+        /* KAYDIRMA (SWIPE/DRAG) TASARIMLARI (YENİ MODERN RENKLER) */
         .news-grid { display: grid; gap: 20px; transition: all 0.3s ease; overflow-x: hidden; }
-        .swipe-wrapper { position: relative; border-radius: var(--radius-lg); background: var(--surface-light); overflow: hidden; display: block; }
+        .swipe-wrapper { position: relative; border-radius: var(--radius-lg); background: transparent; overflow: hidden; display: block; }
         .swipe-bg { position: absolute; top:0; bottom:0; width: 50%; display: flex; align-items: center; font-weight: 800; font-size: 1.2rem; color: white; z-index: 1; }
-        .swipe-bg-left { left: 0; background: #10b981; padding-left: 20px; justify-content: flex-start; } 
-        .swipe-bg-right { right: 0; background: var(--danger); padding-right: 20px; justify-content: flex-end; } 
+        
+        .swipe-bg-left { left: 0; background: var(--accent); padding-left: 20px; justify-content: flex-start; } /* Saks Mavisi (Arşivle) */
+        .swipe-bg-right { right: 0; background: #475569; padding-right: 20px; justify-content: flex-end; } /* Arduvaz Grisi (Okundu) */
         
         .grid-small { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
         .grid-medium { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
@@ -142,7 +140,8 @@
         .grid-list .news-content { padding: 10px 15px; justify-content: center; }
         .grid-list .news-content h3 { font-size: 1.05rem; -webkit-line-clamp: 2; margin-bottom: 5px; }
 
-        .news-card { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; user-select: none; z-index: 2; width: 100%; }
+        /* Metin seçmeyi engeller ki fareyle kaydırırken sorun çıkmasın */
+        .news-card { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; user-select: none; -webkit-user-select: none; z-index: 2; width: 100%; touch-action: pan-y; }
         .news-card.swiping { transition: none; }
         .news-card.read-article { opacity: 0.5; filter: grayscale(50%); } 
         .news-card:hover { border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); opacity: 1; filter: none; }
@@ -462,7 +461,8 @@
                     readArticles: readArticles,
                     archivedArticles: archivedArticles,
                     customRSSFeeds: JSON.parse(localStorage.getItem('customRSSFeeds')) || [],
-                    appTheme: currentTheme
+                    appTheme: currentTheme,
+                    activeSources: activeSources 
                 }, { merge: true });
             } catch (e) { console.error("Bulut eşitleme hatası:", e); }
         }
@@ -475,10 +475,17 @@
                     const data = doc.data();
                     if (data.readArticles) { readArticles = data.readArticles; localStorage.setItem('readArticlesList', JSON.stringify(readArticles)); }
                     if (data.archivedArticles) { archivedArticles = data.archivedArticles; localStorage.setItem('archivedArticlesList', JSON.stringify(archivedArticles)); }
-                    if (data.customRSSFeeds) { localStorage.setItem('customRSSFeeds', JSON.stringify(data.customRSSFeeds)); loadCustomFeeds(); }
+                    if (data.customRSSFeeds) { localStorage.setItem('customRSSFeeds', JSON.stringify(data.customRSSFeeds)); }
                     if (data.appTheme) { changeTheme(data.appTheme); }
+                    if (data.activeSources) { 
+                        activeSources = data.activeSources; 
+                        localStorage.setItem('activeSourcesList', JSON.stringify(activeSources));
+                    }
                     
+                    loadCustomFeeds(); 
+                    renderChips();
                     handleSearch(true);
+                    
                     document.getElementById('toastText').innerText = `☁️ Ayarların buluttan yüklendi!`;
                     document.getElementById('toastNotification').classList.add('show'); 
                     setTimeout(() => { document.getElementById('toastNotification').classList.remove('show'); }, 3000);
@@ -550,7 +557,6 @@
             }
         };
 
-        // BOŞLUĞA TIKLAYINCA FİLTRE MENÜSÜNÜ KAPATMA
         document.addEventListener('click', (e) => {
             const wrapper = document.getElementById('controlsWrapper');
             if (!wrapper.classList.contains('collapsed')) {
@@ -568,13 +574,10 @@
             else { wrapper.classList.add('collapsed'); icon.innerText = 'Genişlet ▼'; }
         }
 
-        // TEMA DEĞİŞTİRİCİ
         function changeTheme(themeName, btnElement) {
             document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
-            else {
-                Array.from(document.querySelectorAll('.theme-btn')).find(b => b.getAttribute('onclick').includes(themeName))?.classList.add('active');
-            }
+            else { Array.from(document.querySelectorAll('.theme-btn')).find(b => b.getAttribute('onclick').includes(themeName))?.classList.add('active'); }
             
             document.body.setAttribute('data-theme', themeName);
             currentTheme = themeName;
@@ -629,7 +632,7 @@
 
         function popupRefresh() {
             document.getElementById('popupFilterList').innerHTML = '<div style="color:var(--accent); width:100%; text-align:center; padding:20px; font-weight:bold;">🔄 Kaynaklar ağda taranıyor...</div>';
-            checkNewArticlesInBackground(true).then(() => { renderPopupChips(); });
+            checkNewArticlesInBackground(true).then(() => { renderChips(); });
         }
 
         function switchLangTab(lang) {
@@ -637,6 +640,8 @@
             currentLang = lang;
             document.getElementById('tabLangTR').classList.remove('active'); document.getElementById('tabLangEN').classList.remove('active');
             document.getElementById('tabLang' + lang).classList.add('active');
+            
+            localStorage.removeItem('activeSourcesList');
             loadCustomFeeds(); fetchAllRSS(true); 
         }
 
@@ -654,7 +659,7 @@
             if(event) event.stopPropagation();
             document.getElementById('sourceFilterModal').style.display = 'flex';
             document.getElementById('popupSearchInput').value = document.getElementById('searchInput').value;
-            renderPopupChips();
+            renderChips();
         }
 
         function closeSourceModal() {
@@ -667,7 +672,19 @@
             const savedFeeds = JSON.parse(localStorage.getItem('customRSSFeeds')) || [];
             const langFeeds = savedFeeds.filter(f => (f.lang || 'TR') === currentLang);
             RSS_FEEDS.push(...langFeeds);
-            activeSources = RSS_FEEDS.map(f => f.name); 
+            
+            const savedActive = JSON.parse(localStorage.getItem('activeSourcesList'));
+            if (savedActive && savedActive.length > 0) {
+                activeSources = savedActive;
+            } else {
+                activeSources = RSS_FEEDS.map(f => f.name); 
+            }
+            renderChips();
+        }
+        
+        function saveActiveSources() {
+            localStorage.setItem('activeSourcesList', JSON.stringify(activeSources));
+            syncToCloud();
         }
 
         function addCustomRSS() {
@@ -677,6 +694,10 @@
             const newFeed = { id: 'custom_' + Date.now(), name: name, url: url, isCustom: true, lang: currentLang };
             const savedFeeds = JSON.parse(localStorage.getItem('customRSSFeeds')) || [];
             savedFeeds.push(newFeed); localStorage.setItem('customRSSFeeds', JSON.stringify(savedFeeds));
+            
+            activeSources.push(name);
+            saveActiveSources();
+            
             loadCustomFeeds(); nameInput.value = ''; urlInput.value = ''; document.getElementById('addRssForm').classList.remove('show');
             syncToCloud();
             fetchAllRSS(true); 
@@ -688,51 +709,70 @@
             let savedFeeds = JSON.parse(localStorage.getItem('customRSSFeeds')) || [];
             savedFeeds = savedFeeds.filter(f => f.id !== id); localStorage.setItem('customRSSFeeds', JSON.stringify(savedFeeds));
             syncToCloud();
-            loadCustomFeeds(); renderPopupChips(); handleSearch();
+            loadCustomFeeds(); handleSearch();
         }
 
         function toggleSourceState(sourceName) {
             if(activeSources.includes(sourceName)) { activeSources = activeSources.filter(s => s !== sourceName); } 
             else { activeSources.push(sourceName); }
-            renderPopupChips(); 
+            saveActiveSources();
+            renderChips(); 
+            handleSearch();
         }
 
         function toggleAllSourcesState(event) {
             if(event) event.stopPropagation();
             if(activeSources.length === RSS_FEEDS.length) { activeSources = []; } 
             else { activeSources = RSS_FEEDS.map(f => f.name); }
-            renderPopupChips(); handleSearch();
+            saveActiveSources();
+            renderChips(); handleSearch();
         }
 
-        function renderPopupChips() {
-            const list = document.getElementById('popupFilterList'); list.innerHTML = '';
+        // HEM ANA MENÜ HEM POPUP ÇİPLERİNİ (FİLTRELERİ) SENKRONİZE ÇİZER
+        function renderChips() {
+            const listMain = document.getElementById('filterList');
+            const listPopup = document.getElementById('popupFilterList');
+            if(listMain) listMain.innerHTML = '';
+            if(listPopup) listPopup.innerHTML = '';
+
             RSS_FEEDS.forEach(feed => {
                 const isActive = activeSources.includes(feed.name);
-                const label = document.createElement('label'); label.className = `chip ${isActive ? 'active' : ''}`;
                 let deleteBtn = feed.isCustom ? `<span class="chip-delete" onclick="deleteCustomRSS('${feed.id}', event)" title="Kaynağı Sil">✕</span>` : '';
-                label.innerHTML = `<input type="checkbox" value="${feed.name}" ${isActive ? 'checked' : ''} onchange="toggleSourceState('${feed.name}')"> ${feed.name} ${deleteBtn}`;
-                list.appendChild(label);
+                
+                const htmlStr = `<input type="checkbox" value="${feed.name}" ${isActive ? 'checked' : ''} onchange="toggleSourceState('${feed.name}')"> ${feed.name} ${deleteBtn}`;
+                
+                const labelMain = document.createElement('label'); 
+                labelMain.className = `chip ${isActive ? 'active' : ''}`;
+                labelMain.innerHTML = htmlStr;
+                if(listMain) listMain.appendChild(labelMain);
+
+                const labelPopup = document.createElement('label'); 
+                labelPopup.className = `chip ${isActive ? 'active' : ''}`;
+                labelPopup.innerHTML = htmlStr;
+                if(listPopup) listPopup.appendChild(labelPopup);
             });
         }
 
+        // KAYDIRMA (DRAG & SWIPE) MEKANİĞİ
+        let isDragging = false;
         let touchStartX = 0; let touchStartY = 0; 
         let pullDistance = 0;
         let swipingCard = null; let swipeCurrentX = 0; let isVerticalScroll = false;
         
         const ptrEl = document.getElementById('pullToRefresh'); const ptrIcon = document.getElementById('ptrIcon'); const ptrText = document.getElementById('ptrText');
 
-        document.addEventListener('touchstart', e => { 
-            if (window.scrollY <= 5) touchStartY = e.touches[0].clientY; 
-            const card = e.target.closest('.news-card');
+        function handleDragStart(clientX, clientY, target) {
+            if (window.scrollY <= 5) touchStartY = clientY; 
+            const card = target.closest('.news-card');
             if(card) {
-                swipingCard = card; touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
+                swipingCard = card; touchStartX = clientX; touchStartY = clientY;
                 swipeCurrentX = 0; isVerticalScroll = false; card.classList.add('swiping');
             }
-        }, {passive: true});
+        }
 
-        document.addEventListener('touchmove', e => {
+        function handleDragMove(clientX, clientY) {
             if (window.scrollY <= 5 && touchStartY > 0 && !swipingCard) {
-                pullDistance = e.touches[0].clientY - touchStartY;
+                pullDistance = clientY - touchStartY;
                 if (pullDistance > 0 && pullDistance < 150) {
                     ptrEl.style.opacity = Math.min(pullDistance / 80, 1); ptrEl.style.transform = `translateX(-50%) translateY(${pullDistance * 0.5}px)`;
                     if (pullDistance > 80) { ptrIcon.innerText = "🔄"; ptrText.innerText = "Yenilemek için bırakın"; } 
@@ -741,17 +781,17 @@
             }
 
             if (swipingCard) {
-                const diffX = e.touches[0].clientX - touchStartX;
-                const diffY = e.touches[0].clientY - touchStartY;
+                const diffX = clientX - touchStartX;
+                const diffY = clientY - touchStartY;
                 if(!isVerticalScroll && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 10) {
                     isVerticalScroll = true; swipingCard.style.transform = `translateX(0px)`; swipingCard.classList.remove('swiping'); swipingCard = null; return;
                 }
                 if(isVerticalScroll) return;
                 swipeCurrentX = diffX; swipingCard.style.transform = `translateX(${swipeCurrentX}px)`;
             }
-        }, {passive: true});
+        }
 
-        document.addEventListener('touchend', e => {
+        function handleDragEnd() {
             if (pullDistance > 80 && !isFetchingRefresh && !swipingCard) { ptrIcon.innerText = "⏳"; ptrText.innerText = "Ağ taranıyor..."; checkNewArticlesInBackground(true); } 
             else { resetPullToRefresh(); }
 
@@ -771,7 +811,21 @@
                 }
                 swipingCard = null;
             }
+        }
+
+        // Mobilde Dokunma
+        document.addEventListener('touchstart', e => handleDragStart(e.touches[0].clientX, e.touches[0].clientY, e.target), {passive: true});
+        document.addEventListener('touchmove', e => handleDragMove(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
+        document.addEventListener('touchend', e => handleDragEnd());
+
+        // Bilgisayarda Fare ile Sürükleme
+        document.addEventListener('mousedown', e => { 
+            const card = e.target.closest('.news-card');
+            if(card) { isDragging = true; handleDragStart(e.clientX, e.clientY, e.target); }
         });
+        document.addEventListener('mousemove', e => { if (!isDragging) return; handleDragMove(e.clientX, e.clientY); });
+        document.addEventListener('mouseup', e => { if (!isDragging) return; isDragging = false; handleDragEnd(); });
+
         function resetPullToRefresh() { ptrEl.style.transform = `translateX(-50%) translateY(0)`; ptrEl.style.opacity = 0; touchStartY = 0; pullDistance = 0; setTimeout(() => { ptrIcon.innerText = "⬇️"; ptrText.innerText = "Yenilemek için çekin"; }, 300); }
 
         window.addEventListener('scroll', () => {
@@ -848,15 +902,13 @@
         async function fetchFeedData(feed) {
             let articles = []; const domain = getDomain(feed.url);
             const fallbackGoogleRss = `https://news.google.com/rss/search?q=site:${domain}&hl=tr&gl=TR&ceid=TR:tr`;
-            
-            // YENİ: Cache Buster (Proxy Önbellek Kırıcı)
             const cb = `_cb=${Date.now()}`;
             const urlWithCb = feed.url.includes('?') ? `${feed.url}&${cb}` : `${feed.url}?${cb}`;
 
             const proxies = [ 
                 `https://api.allorigins.win/get?url=${encodeURIComponent(urlWithCb)}`, 
                 `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(urlWithCb)}`, 
-                `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}` 
+                `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(urlWithCb)}` 
             ];
             
             for (let proxy of proxies) {
@@ -878,6 +930,8 @@
                                 if (!img) img = PLACEHOLDER_IMG;
                                 
                                 let pubDate = new Date((item.pubDate||"").replace(/-/g, '/')); if (isNaN(pubDate.getTime())) pubDate = new Date();
+                                if (pubDate.getTime() > Date.now() + 3600000) { pubDate = new Date(); }
+                                
                                 let cats = item.categories || [];
                                 return { title: item.title, description: (item.description||"").replace(/<[^>]*>?/gm, '').trim().substring(0, 180) + '...', link: item.link, image: img, source: feed.name, date: pubDate, timestamp: pubDate.getTime(), categories: cats };
                             });
@@ -910,7 +964,8 @@
                 if (contentEnc.length === 0) contentEnc = item.getElementsByTagNameNS("*", "encoded");
                 let fullText = desc + " " + (contentEnc.length > 0 ? contentEnc[0].textContent : "");
                 
-                let pubDate = new Date(); const pubNodes = item.getElementsByTagName('pubDate'); if(pubNodes.length > 0) { const parsed = new Date(pubNodes[0].textContent); if(!isNaN(parsed.getTime())) pubDate = parsed; }
+                let pubDate = new Date(); const pubNodes = item.getElementsByTagName('pubDate'); if(pubNodes.length > 0) { const parsed = new Date(pubNodes[0].textContent); if(!isNaN(pubDate.getTime())) pubDate = parsed; }
+                if (pubDate.getTime() > Date.now() + 3600000) { pubDate = new Date(); }
                 
                 let image = ""; 
                 const enclosure = item.querySelector("enclosure"); 
@@ -942,6 +997,7 @@
             localStorage.setItem('savedNewsArticles', JSON.stringify(toSave));
         }
 
+        // YENİ FİLTRE MANTIĞI: Her zaman tüm RSS'leri çeker, ancak handleSearch ekranı gizler.
         async function fetchAllRSS(isInitialLoad = false) {
             const grid = document.getElementById('newsGrid'); const btn = document.getElementById('fetchBtn'); btn.disabled = true; btn.innerText = 'GÜNCELLENİYOR...';
             if(!isInitialLoad) {
@@ -950,7 +1006,7 @@
             
             allArticles = []; let completedCount = 0;
             const fetchPromises = RSS_FEEDS.map(async (feed) => {
-                if(!activeSources.includes(feed.name)) { completedCount++; return; }
+                // FİLTRE KISITLAMASI KALDIRILDI! Her şeyi çekip hafızaya alıyor.
                 try {
                     const feedArticles = await fetchFeedData(feed);
                     if (feedArticles.length > 0) allArticles.push(...feedArticles);
@@ -971,7 +1027,7 @@
         async function checkNewArticlesInBackground(isTopRefresh = false) {
             isFetchingRefresh = true; const endSpinner = document.getElementById('endRefreshSpinner'); let newCount = 0;
             const fetchPromises = RSS_FEEDS.map(async (feed) => {
-                if(!activeSources.includes(feed.name)) return;
+                // FİLTRE KISITLAMASI KALDIRILDI! Arka planda her şeyi çeker.
                 try {
                     const feedArticles = await fetchFeedData(feed);
                     feedArticles.forEach(newArt => { const exists = allArticles.find(a => a.link === newArt.link); if(!exists) { allArticles.push(newArt); newCount++; } });
@@ -1001,6 +1057,7 @@
             filteredArticles = sourceArray.filter(art => {
                 if (!isArchiveView && !showReadArticles && readArticles.includes(art.link)) return false;
 
+                // FİLTRE BURADA ÇALIŞIR! Eğer kaynak aktif değilse ekranda gizler (Ama arkada yenilenmiştir)
                 const sourceMatch = isArchiveView ? true : activeSources.includes(art.source); 
                 if(!sourceMatch) return false;
 
