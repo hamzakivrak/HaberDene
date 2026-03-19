@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Haber Portalı Pro | Global Medya Üssü</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --primary: #e11d48; --primary-hover: #be123c; --bg-dark: #0f172a;
@@ -19,10 +24,19 @@
         body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; padding: 0 15px 20px 15px; overflow-anchor: auto; -webkit-font-smoothing: antialiased; overscroll-behavior-y: contain; transition: padding 0.3s; }
         .container { max-width: 1400px; margin: 0 auto; position: relative; }
         
-        /* Yukarıdan Çek Yenile (Pull to Refresh) */
         .pull-to-refresh { position: fixed; top: -60px; left: 50%; transform: translateX(-50%); background: var(--surface); color: var(--primary); padding: 10px 20px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid var(--surface-light); font-weight: 700; font-size: 0.95rem; z-index: 2000; opacity: 0; display: flex; align-items: center; gap: 10px; pointer-events: none; transition: opacity 0.2s ease; }
 
-        header { text-align: center; padding: 30px 0 20px; transition: all 0.3s; }
+        /* KULLANICI GİRİŞ BÖLÜMÜ (YENİ) */
+        header { text-align: center; padding: 60px 0 20px; transition: all 0.3s; position: relative; }
+        .auth-container { position: absolute; top: 15px; right: 15px; z-index: 1000; display: flex; justify-content: flex-end; }
+        .btn-login { background: var(--primary); color: white; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(225, 29, 72, 0.3); transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-login:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .user-profile { display: flex; align-items: center; gap: 10px; background: rgba(30, 41, 59, 0.9); padding: 5px 15px 5px 5px; border-radius: 30px; border: 1px solid var(--surface-light); box-shadow: var(--shadow-card); }
+        .user-profile img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .user-profile span { font-weight: 600; font-size: 0.85rem; color: white; }
+        .btn-logout { background: transparent; border: none; color: #fca5a5; cursor: pointer; font-weight: bold; font-size: 0.8rem; margin-left: 5px; transition: 0.2s; }
+        .btn-logout:hover { color: var(--danger); text-decoration: underline; }
+
         header h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; margin-bottom: 5px; text-shadow: var(--shadow-glow); }
         header h1 span { color: var(--primary); }
         header p { color: var(--text-muted); font-size: clamp(0.85rem, 3vw, 1rem); font-weight: 500; }
@@ -81,16 +95,16 @@
         .add-rss-form input { padding: 12px 15px; border-radius: 8px; border: 1px solid var(--surface-light); background: var(--bg-dark); color: white; outline: none; }
         .add-rss-form input:focus { border-color: var(--accent); }
         .add-rss-form button { padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .add-rss-form button:hover { background: #2563eb; }
 
         button.fetch-btn { width: 100%; background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px; border-radius: var(--radius-md); font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2); }
         button.fetch-btn:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4); }
 
-        /* KAYDIRMA (SWIPE) TASARIMLARI */
         .news-grid { display: grid; gap: 20px; transition: all 0.3s ease; overflow-x: hidden; }
         .swipe-wrapper { position: relative; border-radius: var(--radius-lg); background: var(--surface-light); overflow: hidden; display: block; }
         .swipe-bg { position: absolute; top:0; bottom:0; width: 50%; display: flex; align-items: center; font-weight: 800; font-size: 1.2rem; color: white; z-index: 1; }
-        .swipe-bg-left { left: 0; background: #10b981; padding-left: 20px; justify-content: flex-start; } /* Sağa kaydırılınca (Arşiv) */
-        .swipe-bg-right { right: 0; background: var(--danger); padding-right: 20px; justify-content: flex-end; } /* Sola kaydırılınca (Okundu) */
+        .swipe-bg-left { left: 0; background: #10b981; padding-left: 20px; justify-content: flex-start; } 
+        .swipe-bg-right { right: 0; background: var(--danger); padding-right: 20px; justify-content: flex-end; } 
         
         .grid-small { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
         .grid-medium { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
@@ -103,7 +117,7 @@
         .grid-list .news-content h3 { font-size: 1.05rem; -webkit-line-clamp: 2; margin-bottom: 5px; }
 
         .news-card { background: var(--surface); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; user-select: none; z-index: 2; width: 100%; }
-        .news-card.swiping { transition: none; } /* Kaydırma anında animasyon iptal */
+        .news-card.swiping { transition: none; }
         .news-card.read-article { opacity: 0.5; filter: grayscale(50%); } 
         .news-card:hover { border-color: var(--primary); box-shadow: var(--shadow-card), 0 0 0 1px var(--primary); opacity: 1; filter: none; }
         
@@ -130,25 +144,16 @@
         .meta { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 0.8rem; color: var(--text-muted); font-weight: 500; pointer-events: auto; }
         .read-more { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
 
-        /* SHORTS TAM EKRAN MODU */
         body.shorts-mode { padding: 0; overflow-x: hidden; }
         body.shorts-mode header { display: none; }
         body.shorts-mode .controls-wrapper { margin-bottom: 0; border-radius: 0; border-left: none; border-right: none; }
-        body.shorts-mode .news-grid { 
-            display: flex !important; flex-direction: column; gap: 0; 
-            height: calc(100vh - 54px); 
-            overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; 
-        }
-        body.shorts-mode .swipe-wrapper { 
-            flex: 0 0 100%; height: calc(100vh - 54px); 
-            scroll-snap-align: start; border-radius: 0; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 0;
-        }
+        body.shorts-mode .news-grid { display: flex !important; flex-direction: column; gap: 0; height: calc(100vh - 54px); overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+        body.shorts-mode .swipe-wrapper { flex: 0 0 100%; height: calc(100vh - 54px); scroll-snap-align: start; border-radius: 0; border: none; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 0; }
         body.shorts-mode .news-card { height: 100%; border-radius: 0; border: none; }
         body.shorts-mode .card-img-wrapper { height: 60%; }
         body.shorts-mode .news-content { height: 40%; justify-content: center; }
         body.shorts-mode .news-content h3 { font-size: 1.4rem; -webkit-line-clamp: 5; }
 
-        /* MODAL STİLLERİ */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 2000; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .modal-content { background: var(--bg-dark); max-width: 1000px; width: 100%; height: 95vh; border-radius: var(--radius-lg); overflow: hidden; position: relative; display: flex; flex-direction: column; border: 1px solid var(--surface-light); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         @keyframes modalPop { 0% { opacity: 0; transform: scale(0.95) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
@@ -208,8 +213,17 @@
 
     <div class="container">
         <header id="mainHeader">
+            <div class="auth-container">
+                <button id="loginBtn" class="btn-login" onclick="signInWithGoogle()">Google ile Giriş Yap</button>
+                <div id="userInfo" class="user-profile" style="display:none;">
+                    <img id="userPic" src="" alt="User">
+                    <span id="userName">Kullanıcı</span>
+                    <button class="btn-logout" onclick="signOut()">Çıkış</button>
+                </div>
+            </div>
+            
             <h1>Haber Portalı <span>Pro</span></h1>
-            <p>Global Kaynaklar, Akıllı Filtreler ve Sınırsız Akış</p>
+            <p>Global Kaynaklar, Bulut Senkronizasyonu ve Sınırsız Akış</p>
         </header>
 
         <div class="controls-wrapper collapsed" id="controlsWrapper">
@@ -297,7 +311,7 @@
         <div id="warningContainer"></div>
 
         <div id="newsGrid" class="news-grid grid-medium">
-            <div class="status-msg">Önbellekten haberler yükleniyor...</div>
+            <div class="status-msg">Buluttan veya önbellekten haberler yükleniyor...</div>
         </div>
         
         <div id="scrollSpinner" class="status-msg" style="display: none; padding: 20px;">Aşağı doğru iniliyor, daha fazla haber yükleniyor...</div>
@@ -366,6 +380,90 @@
     </div>
 
     <script>
+        // --- FIREBASE KURULUMU VE BAĞLANTISI ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-s9FU-wjenKoke_GFDfbqQ8voHZF1btY",
+            authDomain: "haber-portali-pro.firebaseapp.com",
+            projectId: "haber-portali-pro",
+            storageBucket: "haber-portali-pro.firebasestorage.app",
+            messagingSenderId: "956145944082",
+            appId: "1:956145944082:web:f13c5003d5ffc1fe477acb"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        let currentUser = null;
+
+        // KULLANICI GİRİŞ/ÇIKIŞ DİNLEYİCİSİ
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'flex';
+                document.getElementById('userPic').src = user.photoURL;
+                document.getElementById('userName').innerText = user.displayName.split(' ')[0];
+                loadFromCloud(); // Giriş yapınca buluttaki veriyi çek
+            } else {
+                currentUser = null;
+                document.getElementById('loginBtn').style.display = 'flex';
+                document.getElementById('userInfo').style.display = 'none';
+                // Çıkış yapınca yerel hafızaya (Offline) dön
+                readArticles = JSON.parse(localStorage.getItem('readArticlesList')) || [];
+                archivedArticles = JSON.parse(localStorage.getItem('archivedArticlesList')) || [];
+                loadCustomFeeds();
+                handleSearch(true);
+            }
+        });
+
+        function signInWithGoogle() {
+            auth.signInWithPopup(provider).catch(err => { alert("Giriş başarısız: " + err.message); });
+        }
+
+        function signOut() { auth.signOut(); }
+
+        // VERİLERİ BULUTA GÖNDERME FONKSİYONU
+        async function syncToCloud() {
+            if (!currentUser) return;
+            try {
+                await db.collection('users').doc(currentUser.uid).set({
+                    readArticles: readArticles,
+                    archivedArticles: archivedArticles,
+                    customRSSFeeds: JSON.parse(localStorage.getItem('customRSSFeeds')) || []
+                }, { merge: true });
+            } catch (e) { console.error("Bulut eşitleme hatası:", e); }
+        }
+
+        // VERİLERİ BULUTTAN ÇEKME FONKSİYONU
+        async function loadFromCloud() {
+            if (!currentUser) return;
+            try {
+                const doc = await db.collection('users').doc(currentUser.uid).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.readArticles) {
+                        readArticles = data.readArticles;
+                        localStorage.setItem('readArticlesList', JSON.stringify(readArticles));
+                    }
+                    if (data.archivedArticles) {
+                        archivedArticles = data.archivedArticles;
+                        localStorage.setItem('archivedArticlesList', JSON.stringify(archivedArticles));
+                    }
+                    if (data.customRSSFeeds) {
+                        localStorage.setItem('customRSSFeeds', JSON.stringify(data.customRSSFeeds));
+                        loadCustomFeeds();
+                    }
+                    handleSearch(true);
+                    
+                    document.getElementById('toastText').innerText = `☁️ Ayarların buluttan yüklendi!`;
+                    document.getElementById('toastNotification').classList.add('show'); 
+                    setTimeout(() => { document.getElementById('toastNotification').classList.remove('show'); }, 3000);
+                }
+            } catch (e) { console.error("Buluttan veri çekme hatası:", e); }
+        }
+
         const PLACEHOLDER_IMG = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'%3E%3Crect width='400' height='200' fill='%231e293b'/%3E%3Ctext x='50%25' y='50%25' font-family='sans-serif' font-size='16' fill='%2394a3b8' text-anchor='middle' dy='.3em'%3EGörsel Yok%3C/text%3E%3C/svg%3E";
 
         const FEEDS_TR = [
@@ -417,23 +515,20 @@
             loadCustomFeeds(); 
             document.getElementById('toggleIcon').innerText = 'Genişlet ▼'; 
             
-            // 1. Önce hafızadaki (cache) haberleri yükle ve hemen göster (Sıfır saniye)
             const savedData = JSON.parse(localStorage.getItem('savedNewsArticles')) || [];
             if(savedData.length > 0) {
                 allArticles = savedData.map(a => { a.date = new Date(a.timestamp); return a; });
                 handleSearch(true);
-                // 2. Ardından arka planda sessizce yeni güncellemeleri ara
                 setTimeout(() => { checkNewArticlesInBackground(true); }, 1500);
             } else {
                 fetchAllRSS(true); 
             }
         };
 
-        // BOŞLUĞA TIKLAYINCA FİLTRE MENÜSÜNÜ KAPATMA
         document.addEventListener('click', (e) => {
             const wrapper = document.getElementById('controlsWrapper');
             if (!wrapper.classList.contains('collapsed')) {
-                if (!wrapper.contains(e.target)) {
+                if (!wrapper.contains(e.target) && e.target.id !== 'loginBtn') {
                     wrapper.classList.add('collapsed');
                     document.getElementById('toggleIcon').innerText = 'Genişlet ▼';
                 }
@@ -447,7 +542,6 @@
             else { wrapper.classList.add('collapsed'); icon.innerText = 'Genişlet ▼'; }
         }
 
-        // OKUNANLARI GİZLE/GÖSTER SİSTEMİ
         function toggleReadVisibility(show) {
             showReadArticles = show;
             document.getElementById('showReadMain').checked = show;
@@ -459,8 +553,9 @@
             if (!readArticles.includes(link)) {
                 readArticles.push(link);
                 localStorage.setItem('readArticlesList', JSON.stringify(readArticles));
+                syncToCloud(); // Buluta gönder
                 if (!fromSwipe && !showReadArticles) handleSearch(true);
-                else if (!fromSwipe) handleSearch(true); // Soluk efekti uygula
+                else if (!fromSwipe) handleSearch(true); 
             }
         }
 
@@ -470,12 +565,12 @@
             if(!archivedArticles.find(a => a.link === link)) {
                 archivedArticles.push(art);
                 localStorage.setItem('archivedArticlesList', JSON.stringify(archivedArticles));
+                syncToCloud(); // Buluta gönder
             }
             document.getElementById('toastText').innerText = `💾 Haber Arşive Eklendi!`;
             document.getElementById('toastNotification').classList.add('show'); setTimeout(() => { document.getElementById('toastNotification').classList.remove('show'); }, 3000);
         }
 
-        // GÖRÜNÜM VE SHORTS SİSTEMİ
         function setGridSize(size, btnElement) {
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
@@ -487,7 +582,6 @@
             else document.body.classList.remove('shorts-mode');
         }
 
-        // POP-UP İÇİ ARAMA SENKRONİZASYONU
         function syncSearchInputs(val) {
             document.getElementById('searchInput').value = val;
             handleSearch();
@@ -544,6 +638,7 @@
             const savedFeeds = JSON.parse(localStorage.getItem('customRSSFeeds')) || [];
             savedFeeds.push(newFeed); localStorage.setItem('customRSSFeeds', JSON.stringify(savedFeeds));
             loadCustomFeeds(); nameInput.value = ''; urlInput.value = ''; document.getElementById('addRssForm').classList.remove('show');
+            syncToCloud();
             fetchAllRSS(true); 
         }
 
@@ -552,6 +647,7 @@
             if(!confirm("Bu özel RSS kaynağını silmek istediğinize emin misiniz?")) return;
             let savedFeeds = JSON.parse(localStorage.getItem('customRSSFeeds')) || [];
             savedFeeds = savedFeeds.filter(f => f.id !== id); localStorage.setItem('customRSSFeeds', JSON.stringify(savedFeeds));
+            syncToCloud();
             loadCustomFeeds(); renderPopupChips(); handleSearch();
         }
 
@@ -579,7 +675,6 @@
             });
         }
 
-        // PULL TO REFRESH & SWIPE TO ACTION SİSTEMİ
         let touchStartX = 0; let touchStartY = 0; 
         let pullDistance = 0;
         let swipingCard = null; let swipeCurrentX = 0; let isVerticalScroll = false;
@@ -587,10 +682,7 @@
         const ptrEl = document.getElementById('pullToRefresh'); const ptrIcon = document.getElementById('ptrIcon'); const ptrText = document.getElementById('ptrText');
 
         document.addEventListener('touchstart', e => { 
-            // Pull to refresh start
             if (window.scrollY <= 5) touchStartY = e.touches[0].clientY; 
-            
-            // Swipe card start
             const card = e.target.closest('.news-card');
             if(card) {
                 swipingCard = card; touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
@@ -599,7 +691,6 @@
         }, {passive: true});
 
         document.addEventListener('touchmove', e => {
-            // Pull to refresh move
             if (window.scrollY <= 5 && touchStartY > 0 && !swipingCard) {
                 pullDistance = e.touches[0].clientY - touchStartY;
                 if (pullDistance > 0 && pullDistance < 150) {
@@ -609,7 +700,6 @@
                 }
             }
 
-            // Swipe card move
             if (swipingCard) {
                 const diffX = e.touches[0].clientX - touchStartX;
                 const diffY = e.touches[0].clientY - touchStartY;
@@ -622,22 +712,18 @@
         }, {passive: true});
 
         document.addEventListener('touchend', e => {
-            // Pull to refresh end
             if (pullDistance > 80 && !isFetchingRefresh && !swipingCard) { ptrIcon.innerText = "⏳"; ptrText.innerText = "Ağ taranıyor..."; checkNewArticlesInBackground(true); } 
             else { resetPullToRefresh(); }
 
-            // Swipe card end
             if (swipingCard) {
                 const wrapper = swipingCard.closest('.swipe-wrapper');
                 const link = wrapper.dataset.link;
                 swipingCard.classList.remove('swiping');
 
                 if(swipeCurrentX > 100) {
-                    // Sağa kaydırma: Arşivle
                     swipingCard.style.transform = `translateX(100%)`;
                     setTimeout(() => { archiveArticleByLink(link); wrapper.style.display = 'none'; }, 300);
                 } else if(swipeCurrentX < -100) {
-                    // Sola kaydırma: Okundu işaretle
                     swipingCard.style.transform = `translateX(-100%)`;
                     setTimeout(() => { markAsRead(link, true); wrapper.style.display = 'none'; }, 300);
                 } else {
@@ -660,7 +746,6 @@
             }
         });
 
-        // Shorts modu için container içi dikey kaydırma
         document.addEventListener('DOMContentLoaded', () => {
             const newsGrid = document.getElementById('newsGrid');
             newsGrid.addEventListener('scroll', () => {
@@ -757,7 +842,6 @@
             return [];
         }
 
-        // YAPAY ZEKA GÖRSEL VE METİN DEDEKTÖRÜ
         function parseXMLToArticles(textData, feed) {
             const parser = new DOMParser(); 
             const xmlDoc = parser.parseFromString(textData, "text/xml"); 
@@ -776,7 +860,7 @@
                 if (contentEnc.length === 0) contentEnc = item.getElementsByTagNameNS("*", "encoded");
                 let fullText = desc + " " + (contentEnc.length > 0 ? contentEnc[0].textContent : "");
                 
-                let pubDate = new Date(); const pubNodes = item.getElementsByTagName('pubDate'); if(pubNodes.length > 0) { const parsed = new Date(pubNodes[0].textContent); if(!isNaN(pubDate.getTime())) pubDate = parsed; }
+                let pubDate = new Date(); const pubNodes = item.getElementsByTagName('pubDate'); if(pubNodes.length > 0) { const parsed = new Date(pubNodes[0].textContent); if(!isNaN(parsed.getTime())) pubDate = parsed; }
                 
                 let image = ""; 
                 const enclosure = item.querySelector("enclosure"); 
@@ -803,9 +887,8 @@
             return result;
         }
 
-        // VERİLERİ YEREL HAFIZAYA (ÇEVRİMDIŞI) KAYDET
         function saveToLocalMemory() {
-            const toSave = allArticles.slice(0, 300); // Kotayı şişirmemek için en yeni 300 haberi kaydeder
+            const toSave = allArticles.slice(0, 300); 
             localStorage.setItem('savedNewsArticles', JSON.stringify(toSave));
         }
 
@@ -830,12 +913,11 @@
             
             await Promise.all(fetchPromises);
             allArticles.sort((a, b) => b.timestamp - a.timestamp);
-            saveToLocalMemory(); // Yeni veriyi kaydet
+            saveToLocalMemory(); 
             btn.disabled = false; btn.innerText = 'AĞDAN YENİ HABERLERİ ÇEK';
             handleSearch(); 
         }
 
-        // ARKA PLANDA SESSİZ GÜNCELLEME
         async function checkNewArticlesInBackground(isTopRefresh = false) {
             isFetchingRefresh = true; const endSpinner = document.getElementById('endRefreshSpinner'); let newCount = 0;
             const fetchPromises = RSS_FEEDS.map(async (feed) => {
@@ -860,19 +942,15 @@
             isFetchingRefresh = false;
         }
 
-        // FİLTRELEME VE ZEKİ ARAMA MOTORU
         function handleSearch(isSilentRefresh = false) {
             const searchText = trToLowerCase(document.getElementById('searchInput').value.trim()); const searchTerms = searchText.split(' ').filter(t => t.length > 0);
             document.getElementById('popupSearchInput').value = document.getElementById('searchInput').value; 
 
-            // Eğer arşiv görünümündeysek veri havuzu olarak arşivi kullan
             let sourceArray = isArchiveView ? archivedArticles : allArticles;
 
             filteredArticles = sourceArray.filter(art => {
-                // Arşiv modu değilse okunanları gizleme zekası
                 if (!isArchiveView && !showReadArticles && readArticles.includes(art.link)) return false;
 
-                // Arşiv modunda kaynak kontrolünü es geç ki tüm arşiv gözüksün
                 const sourceMatch = isArchiveView ? true : activeSources.includes(art.source); 
                 if(!sourceMatch) return false;
 
@@ -892,7 +970,6 @@
             renderNextBatch();
         }
 
-        // HABER KARTLARINI ÇİZME
         function renderNextBatch() {
             const grid = document.getElementById('newsGrid');
             const nextBatch = filteredArticles.slice(displayedCount, displayedCount + ITEMS_PER_PAGE);
@@ -907,7 +984,6 @@
                 const dateObj = new Date(art.date); const today = new Date();
                 let dateStr = (dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth()) ? "Bugün, " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' }) + " " + dateObj.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
                 
-                // Arka plan swipe alanları ve Kart HTML'i
                 wrapper.innerHTML = `
                     <div class="swipe-bg swipe-bg-left">💾 ${isArchived ? 'Arşivlendi' : 'Arşivle'}</div>
                     <div class="swipe-bg swipe-bg-right">👁️ Gizle</div>
@@ -918,7 +994,6 @@
                     </div>
                 `;
 
-                // TEK TIK / ÇİFT TIK SİSTEMİ
                 const card = wrapper.querySelector('.news-card');
                 let clickTimer = null;
                 card.onclick = (e) => {
@@ -935,7 +1010,6 @@
             displayedCount += nextBatch.length;
         }
 
-        // MODAL (OKUMA PENCERESİ) FONKSİYONLARI
         function switchTab(tab) {
             document.getElementById('tabReader').classList.remove('active'); document.getElementById('tabWeb').classList.remove('active');
             if(tab === 'reader') { document.getElementById('tabReader').classList.add('active'); document.getElementById('readerView').style.display = 'block'; document.getElementById('iframeView').style.display = 'none'; } 
@@ -990,13 +1064,12 @@
             const iframe = document.getElementById('modalIframe'); iframe.removeAttribute('srcdoc'); iframe.src = 'about:blank'; document.getElementById('iframeBanner').style.display = 'flex'; 
         }
 
-        // ÜÇ KERE DOKUNARAK PENCERE KAPATMA ZEKASI
         let tapCount = 0; let tapTimeout;
         document.getElementById('modalBodyArea').addEventListener('click', (e) => {
             if(e.target.tagName === 'A' || e.target.tagName === 'BUTTON') return; 
             tapCount++; clearTimeout(tapTimeout);
             if(tapCount >= 3) { closeModal(); tapCount = 0; } 
-            else { tapTimeout = setTimeout(() => { tapCount = 0; }, 600); } // 600ms'ye çıkarıldı, daha rahat tıklanır
+            else { tapTimeout = setTimeout(() => { tapCount = 0; }, 600); } 
         });
 
         window.onclick = (e) => { 
