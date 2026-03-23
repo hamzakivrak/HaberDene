@@ -698,6 +698,13 @@ function switchTab(tab) {
 }
 
 async function openModal(art) {
+    // Eski özeti gizle ve butonu geri getir
+    document.getElementById('aiSummaryBox').style.display = 'none';
+    document.getElementById('aiSummaryBtn').style.display = 'flex';
+    document.getElementById('aiSummaryBtn').innerHTML = `✨ <span style="font-weight: 800; letter-spacing: 1px;">Yapay Zeka ile Özetle</span>`;
+    document.getElementById('aiSummaryBtn').style.opacity = "1";
+    document.getElementById('aiSummaryBtn').style.pointerEvents = "auto";
+
     const modal = document.getElementById('newsModal');
     document.getElementById('modalSource').innerText = art.source; document.getElementById('modalLinkExt').href = art.link; document.getElementById('modalTitle').innerText = art.title; document.getElementById('modalDesc').innerText = art.description;
     const imgEl = document.getElementById('modalImg'); imgEl.src = art.image; imgEl.style.display = art.image.includes('svg+xml') ? 'none' : 'block';
@@ -757,3 +764,95 @@ window.onclick = (e) => {
     if(e.target.className === 'modal') closeModal(); 
     if(e.target.id === 'sourceFilterModal') closeSourceModal(); 
 };
+
+// --- NLP (DOĞAL DİL İŞLEME) İLE İSTEMCİ TABANLI ÖZETLEME ALGORİTMASI ---
+function generateAISummary() {
+    const textContainer = document.getElementById('fullTextContainer');
+    const rawText = textContainer.innerText.trim();
+    const btn = document.getElementById('aiSummaryBtn');
+    const summaryBox = document.getElementById('aiSummaryBox');
+
+    // Eğer metin henüz yüklenmediyse veya çok kısaysa
+    if (!rawText || rawText.includes("Haber metni analiz ediliyor") || rawText.length < 300) {
+        alert("Özet çıkarabilmek için haber tam metninin yüklenmesi veya metnin yeterince uzun olması gerekiyor.");
+        return;
+    }
+
+    // Butona yükleniyor efekti ver
+    btn.innerHTML = `⏳ <span style="font-weight: 800; letter-spacing: 1px;">Analiz Ediliyor...</span>`;
+    btn.style.opacity = "0.7";
+    btn.style.pointerEvents = "none";
+
+    // Arayüzü dondurmamak için işlemi küçük bir gecikmeyle yapıyoruz
+    setTimeout(() => {
+        // Cümleleri ayır
+        const sentences = rawText.match(/[^.!?]+[.!?]+/g) || [rawText];
+        
+        // Türkçe dolgu (stop) kelimeleri
+        const stopWords = ['ve', 'veya', 'ile', 'ama', 'fakat', 'için', 'bir', 'bu', 'şu', 'o', 'da', 'de', 'mı', 'mi', 'çok', 'en', 'gibi', 'kadar', 'daha', 'olan', 'olarak', 'sonra', 'önce', 'göre', 'kendi', 'diye', 'ise', 'her', 'tüm', 'bütün', 'bazı', 'gibi', 'hem', 'içinde', 'arasında', 'tarafından'];
+        
+        const wordFreq = {};
+        
+        // 1. Kelime Frekanslarını Hesapla
+        sentences.forEach(sentence => {
+            const words = sentence.toLowerCase().match(/[a-zçğıöşü]+/g) || [];
+            words.forEach(word => {
+                if (!stopWords.includes(word) && word.length > 3) {
+                    wordFreq[word] = (wordFreq[word] || 0) + 1;
+                }
+            });
+        });
+
+        // 2. Cümleleri Puanla
+        const scoredSentences = sentences.map((sentence, index) => {
+            const words = sentence.toLowerCase().match(/[a-zçğıöşü]+/g) || [];
+            let score = 0;
+            words.forEach(word => {
+                if (wordFreq[word]) score += wordFreq[word];
+            });
+            score = score / (words.length || 1); 
+            if(index < 3) score *= 1.5; // Baştaki cümleler daha önemlidir
+            
+            return { sentence: sentence.trim(), score: score, index: index };
+        });
+
+        // 3. En yüksek puanlı cümleleri seç
+        scoredSentences.sort((a, b) => b.score - a.score);
+        const topSentences = scoredSentences.slice(0, 4).sort((a, b) => a.index - b.index);
+
+        // 4. Görselleştirme ve Vurgulama
+        let htmlList = '<h4>✨ Akıllı NLP Özeti</h4><ul>';
+        
+        topSentences.forEach(item => {
+            let processedSentence = item.sentence;
+            const words = processedSentence.split(' ');
+            
+            for (let i = 0; i < words.length; i++) {
+                let cleanWord = words[i].toLowerCase().replace(/[^a-zçğıöşü]/g, '');
+                if (cleanWord.length > 5 && wordFreq[cleanWord] > 2) {
+                    words[i] = `<span class="ai-highlight">${words[i]}</span>`;
+                } else if (cleanWord.length > 7 && Math.random() > 0.7) {
+                    words[i] = `<span class="ai-highlight-2">${words[i]}</span>`;
+                }
+            }
+            htmlList += `<li>${words.join(' ')}</li>`;
+        });
+        
+        htmlList += '</ul>';
+
+        // 5. Ekrana Bas
+        summaryBox.innerHTML = htmlList;
+        summaryBox.style.display = 'block';
+        btn.style.display = 'none'; 
+        
+    }, 400); 
+}
+
+// Service Worker Kaydı (PWA için)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('Service Worker başarıyla kaydedildi! Kapsam:', reg.scope))
+      .catch(err => console.log('Service Worker kayıt hatası:', err));
+  });
+}
