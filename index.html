@@ -9,6 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -182,12 +183,19 @@
             </div>
             <div class="modal-body" id="modalBodyArea">
                 <div class="triple-tap-hint">Kapatmak için ekrana 3 kez hızlıca dokun</div>
+                
                 <div id="readerView">
+                    <button id="aiSummaryBtn" class="ai-summary-btn" onclick="generateAISummary()">
+                        ✨ <span style="font-weight: 800; letter-spacing: 1px;">Yapay Zeka ile Özetle</span>
+                    </button>
+                    <div id="aiSummaryBox" class="ai-summary-content"></div>
+                    
                     <h2 class="reader-title" id="modalTitle">Başlık</h2>
                     <img id="modalImg" src="" class="reader-image" onerror="this.style.display='none'">
                     <div class="summary-box"><p id="modalDesc">Özet metin...</p></div>
                     <div id="fullTextContainer" class="reader-text-container"></div>
                 </div>
+
                 <div id="iframeView">
                     <div class="iframe-banner" id="iframeBanner"><span style="animation: pulse 1.5s infinite;">⏳</span> Orijinal site bağlantısı kuruluyor...</div>
                     <iframe id="modalIframe" class="modal-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
